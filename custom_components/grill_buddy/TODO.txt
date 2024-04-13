@@ -1,0 +1,10 @@
+	1. Need ability to set up which sensors to use for the probes
+	2. Need to be able to set target temp for probes
+		a. Protein selection
+		b. Doneness
+		c. + manual specify (custom config)
+	3. Notifications when target temp is reached or has fallen below
+		a. Deadzones
+	4. Start timer after press a button
+	5. Predict when its going to be on temp
+    6. Logo/Icon

@@ -1,0 +1,21 @@
+{
+  "config": {
+    "abort": {
+      "single_instance_allowed": "Only a single configuration of Grill Buddy is allowed."
+    },
+    "error": {
+      "name": "Specify an unique name for the integration."
+    },
+    "step": {
+      "user": {
+        "title": "General set up",
+        "description": "If you need help with the configuration, please see https://github.com/jeroenterheerdt/GrillBuddy",
+        "data": {
+          "name": "Unique name of the integration"
+        }
+      }
+    }
+  },
+  "options": {},
+  "services": {}
+}

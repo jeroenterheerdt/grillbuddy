@@ -1,0 +1,21 @@
+{
+  "config": {
+    "abort": {
+      "single_instance_allowed": "Maar een installatie van Grill Buddy is toegestaan."
+    },
+    "error": {
+      "name": "Geef de integratie een unieke naam."
+    },
+    "step": {
+      "user": {
+        "title": "Algemeen",
+        "description": "Als je hulp nodig hebt, zie https://github.com/jeroenterheerdt/GrillBuddy",
+        "data": {
+          "name": "Unieke naam"
+        }
+      }
+    }
+  },
+  "options": {},
+  "services": {}
+}

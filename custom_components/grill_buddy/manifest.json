@@ -1,0 +1,12 @@
+{
+  "domain": "grill_buddy",
+  "name": "Grill Buddy",
+  "codeowners": ["@jeroenterheerdt"],
+  "config_flow": true,
+  "dependencies": ["http", "panel_custom"],
+  "documentation": "https://github.com/jeroenterheerdt/grill_buddy",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/jeroenterheerdt/grill_buddy/issues",
+  "requirements": [],
+  "version": "v2024.4.0"
+}
