@@ -1,5 +1,23 @@
-	1. Need ability to set up which sensors to use for the probes
-	2. Need to be able to set target temp for probes
+	1. probes:
+		source (sensor)
+		preset or just temp
+		notify when: (?)
+			temp reached
+			fallen below
+			raised above
+			outside of range
+		deadzones
+
+	2. presets:
+		ability to define custom preset:
+			name
+			target temperature
+	2a store temp as celsius internally but convert to fahrenheit as needed
+	2b labels in options flow
+	2c NL translations
+	3. Notifications when target temp is reached or has fallen below
+		how to send?
+2. Need to be able to set target temp for probes
 		a. Protein selection
 		b. Doneness
 		c. + manual specify (custom config)
@@ -8,3 +26,6 @@
 	4. Start timer after press a button
 	5. Predict when its going to be on temp
     6. Logo/Icon
+	7. native unit of measurement in sensor.py?
+	8. services?
+	9. implement time based things timers like stakemate?
