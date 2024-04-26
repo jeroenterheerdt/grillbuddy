@@ -27,6 +27,7 @@ PROBE_ID = "probe_id"
 PROBE_NAME = "probe_name"
 PROBE_SOURCE = "probe_source"
 PROBE_PRESET = "probe_preset"
+PROBE_TEMPERATURE = "probe_temperature"
 SENSOR_ICON = "mdi:grill"
 PRESETS = "presets"
 PRESET_ID = "preset_id"
@@ -61,5 +62,5 @@ CONF_INSTANCE_NAME = "name"
 # Defaults
 
 # Attributes
-
+ATTR_REMOVE = "remove"
 # Services

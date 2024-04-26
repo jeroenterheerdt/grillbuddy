@@ -16,6 +16,7 @@ from .const import (
     PRESET_PROTEIN,
     PRESET_PROTEIN_ENUM,
     PRESET_TARGET_TEMPERATURE,
+    PROBE_TEMPERATURE,
     PRESETS,
     PROBES,
     PROBE_ID,
@@ -37,10 +38,11 @@ SAVE_DELAY = 0
 class ProbeEntry:
     """Probe storage Entry."""
 
-    id = attr.ib(type=int, default=None)
-    name = attr.ib(type=str, default=None)
-    source = attr.ib(type=str, default=None)
-    preset = attr.ib(type=int, default=None)
+    probe_id = attr.ib(type=int, default=None)
+    probe_name = attr.ib(type=str, default=None)
+    probe_source = attr.ib(type=str, default=None)
+    probe_preset = attr.ib(type=int, default=None)
+    probe_temperature = attr.ib(type=float, default=None)
 
 
 @attr.s(slots=True, frozen=True)
@@ -91,6 +93,7 @@ class GrillBuddyStorage:
                         probe_name=probe[PROBE_NAME],
                         probe_source=probe[PROBE_SOURCE],
                         probe_preset=probe[PROBE_PRESET],
+                        probe_temperature=probe[PROBE_TEMPERATURE],
                     )
             if PRESETS in data:
                 for preset in data[PRESETS]:
@@ -106,7 +109,8 @@ class GrillBuddyStorage:
         self.probes = probes
         self.presets = presets
 
-        await self.set_up_factory_defaults()
+        # not needed? should trigger from init?
+        # await self.set_up_factory_defaults()
 
     async def set_up_factory_defaults(self):
         if not self.probes:
@@ -221,7 +225,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 6,
                 PRESET_NAME: localize(
-                    "defaults.preset_ground_beef", self.hass.config.language
+                    "defaults.presets.ground_beef", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.GROUNDBEEF,
                 PRESET_TARGET_TEMPERATURE: 160,
@@ -231,7 +235,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 7,
                 PRESET_NAME: localize(
-                    "defaults.preset_ground_poultry", self.hass.config.language
+                    "defaults.presets.ground_poultry", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.GROUNDPOULTRY,
                 PRESET_TARGET_TEMPERATURE: 165,
@@ -241,7 +245,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 8,
                 PRESET_NAME: localize(
-                    "defaults.preset_lamb_rare", self.hass.config.language
+                    "defaults.presets.lamb_rare", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.RARE,
@@ -252,7 +256,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 9,
                 PRESET_NAME: localize(
-                    "defaults.preset_lamb_medium_rare",
+                    "defaults.presets.lamb_medium_rare",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
@@ -264,7 +268,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 10,
                 PRESET_NAME: localize(
-                    "defaults.preset_lamb_medium", self.hass.config.language
+                    "defaults.presets.lamb_medium", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUM,
@@ -275,7 +279,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 11,
                 PRESET_NAME: localize(
-                    "defaults.preset_lamb_medium_well",
+                    "defaults.presets.lamb_medium_well",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
@@ -287,7 +291,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 12,
                 PRESET_NAME: localize(
-                    "defaults.preset_lamb_well_done", self.hass.config.language
+                    "defaults.presets.lamb_well_done", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.WELLDONE,
@@ -298,7 +302,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 13,
                 PRESET_NAME: localize(
-                    "defaults.preset_pork_medium", self.hass.config.language
+                    "defaults.presets.pork_medium", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.PORK,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUM,
@@ -309,7 +313,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 14,
                 PRESET_NAME: localize(
-                    "defaults.preset_pork_medium_well",
+                    "defaults.presets.pork_medium_well",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.PORK,
@@ -321,7 +325,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 15,
                 PRESET_NAME: localize(
-                    "defaults.preset_pork_well_done", self.hass.config.language
+                    "defaults.presets.pork_well_done", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.PORK,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.WELLDONE,
@@ -332,7 +336,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 16,
                 PRESET_NAME: localize(
-                    "defaults.preset_poultry", self.hass.config.language
+                    "defaults.presets.poultry", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.POULTRY,
                 PRESET_TARGET_TEMPERATURE: 165,
@@ -342,7 +346,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 17,
                 PRESET_NAME: localize(
-                    "defaults.preset_turkey", self.hass.config.language
+                    "defaults.presets.turkey", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.TURKEY,
                 PRESET_TARGET_TEMPERATURE: 165,
@@ -352,7 +356,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 18,
                 PRESET_NAME: localize(
-                    "defaults.preset_veal_rare", self.hass.config.language
+                    "defaults.presets.veal_rare", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.RARE,
@@ -363,7 +367,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 19,
                 PRESET_NAME: localize(
-                    "defaults.preset_veal_medium_rare",
+                    "defaults.presets.veal_medium_rare",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
@@ -375,7 +379,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 20,
                 PRESET_NAME: localize(
-                    "defaults.preset_veal_medium", self.hass.config.language
+                    "defaults.presets.veal_medium", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUM,
@@ -386,7 +390,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 21,
                 PRESET_NAME: localize(
-                    "defaults.preset_veal_medium_well",
+                    "defaults.presets.veal_medium_well",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
@@ -398,7 +402,7 @@ class GrillBuddyStorage:
             **{
                 PRESET_ID: 22,
                 PRESET_NAME: localize(
-                    "defaults.preset_veal_well_done", self.hass.config.language
+                    "defaults.presets.veal_well_done", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.WELLDONE,
@@ -465,7 +469,7 @@ class GrillBuddyStorage:
     def async_create_probe(self, data: dict) -> ProbeEntry:
         """Create a new ProbeEntry."""
         new_probe = ProbeEntry(**data)
-        self.probes[int(new_probe.id)] = new_probe
+        self.probes[int(new_probe.probe_id)] = new_probe
         self.async_schedule_save()
         return attr.asdict(new_probe)
 
@@ -481,11 +485,11 @@ class GrillBuddyStorage:
 
     @callback
     def async_update_probe(self, probe_id: int, changes: dict) -> ProbeEntry:
-        """Update existing zone."""
+        """Update existing probe."""
         probe_id = int(probe_id)
         old = self.probes[probe_id]
         if changes:
-            changes.pop("id", None)
+            changes.pop("probe_id", None)
             new = self.probes[probe_id] = attr.evolve(old, **changes)
         else:
             new = old

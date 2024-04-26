@@ -20,6 +20,9 @@ from .const import (
     DOMAIN,
     PROBE_ID,
     PROBE_NAME,
+    PROBE_SOURCE,
+    PROBE_PRESET,
+    PROBE_TEMPERATURE,
     PROBES,
     NAME,
     VERSION,
@@ -57,6 +60,9 @@ async def async_setup_entry(
             entity_id=entity_id,
             name=config[PROBE_NAME],
             id=config[PROBE_ID],
+            source=config[PROBE_SOURCE],
+            preset=config[PROBE_PRESET],
+            temperature=config[PROBE_TEMPERATURE],
         )
 
         hass.data[DOMAIN][PROBES][config[PROBE_ID]] = sensor_entity
@@ -75,6 +81,9 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         id: str,
         name: str,
         entity_id: str,
+        source: str,
+        preset: float,
+        temperature: float,
     ) -> None:
         """Initialize the sensor entity."""
         self._hass = hass
@@ -83,17 +92,20 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         )
         self._id = id
         self._name = name
+        self._source = source
+        self._preset = preset
+        self._temperature = temperature
         async_dispatcher_connect(
             hass, DOMAIN + "_config_updated", self.async_update_sensor_entity
         )
 
     @callback
     def async_update_sensor_entity(self, id=None):
-        """Update each zone as Sensor entity."""
+        """Update each probe as Sensor entity."""
         if self._id == id and self.hass and self.hass.data:
             # get the new values from store and update sensor state
-            zone = self.hass.data[DOMAIN]["coordinator"].store.async_get_zone(id)
-            self._name = zone["name"]
+            probe = self.hass.data[DOMAIN]["coordinator"].store.async_get_probe(id)
+            self._name = probe["name"]
             self.async_schedule_update_ha_state()
 
     @property
@@ -137,9 +149,9 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
     def device_class(self):
         return SensorDeviceClass.DURATION
 
-    @property
-    def native_unit_of_measurement(self):
-        return "?"
+    # @property
+    # def native_unit_of_measurement(self):
+    #    return "F"
 
     @property
     def native_value(self):
@@ -149,9 +161,9 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
     def suggested_display_precision(self):
         return 0
 
-    @property
-    def suggested_unit_of_measurement(self):
-        return "s"
+    # @property
+    # def suggested_unit_of_measurement(self):
+    #    return "s"
 
     @property
     def extra_state_attributes(self):
@@ -159,6 +171,8 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
 
         return {
             "id": self._id,
+            "source": self._source,
+            "preset": self._preset,
         }
 
     async def async_added_to_hass(self):

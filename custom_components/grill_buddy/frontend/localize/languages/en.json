@@ -55,11 +55,15 @@
       "description": "Set up your probes here",
       "labels": {
         "name": "Name",
-        "source": "Source"
+        "source": "Source",
+        "preset": "Preset"
       },
       "cards": {
         "add-probe": {
-          "header": "Add probe"
+          "header": "Add probe",
+          "actions": {
+            "add": "Add"
+          }
         }
       }
     },

@@ -14,7 +14,7 @@ from homeassistant.helpers.dispatcher import (
     async_dispatcher_send,
 )
 
-from .const import COORDINATOR, PROBES, DOMAIN, NAME, VERSION, MANUFACTURER
+from .const import ATTR_REMOVE, COORDINATOR, PROBES, DOMAIN, NAME, VERSION, MANUFACTURER
 from .localize import localize
 from .store import async_get_registry
 from .panel import (
@@ -140,6 +140,22 @@ class GrillBuddyCoordinator(DataUpdateCoordinator):
     async def async_update_config(self, data):
         self.store.async_update_config(data)
         async_dispatcher_send(self.hass, DOMAIN + "_config_updated")
+
+    async def async_update_probe_config(self, probe_id: int = None, data: dict = {}):
+        if not probe_id is None:
+            probe_id = int(probe_id)
+        if ATTR_REMOVE in data:
+            # delete a probe
+            res = self.store.async_get_probe(probe_id)
+            if not res:
+                return
+            self.store.async_delete_probe(probe_id)
+            await self.async_remove_entity(probe_id)
+        else:
+            # create a probe
+            entry = self.store.async_create_probe(data)
+            async_dispatcher_send(self.hass, DOMAIN + "_register_entity", entry)
+            self.store.async_get_config()
 
     async def async_remove_entity(self, probe_id: str):
         entity_registry = self.hass.helpers.entity_registry.async_get(self.hass)

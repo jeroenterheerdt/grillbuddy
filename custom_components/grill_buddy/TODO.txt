@@ -1,13 +1,17 @@
 	1. probes:
-		source (sensor) - check that the source exists (see smart irrigation mappings?)
+		source (sensor) - check that the source exists (?)
+			can this be a list of sensors instead of a textbox?
+			get the status of the sensor to put in the status for the probe?
 		preset or just temp
+			preset label should include temperature (F/C)
+			whenever I change the preset on a probe, we create a new sensor. That should happen.
 		notify when: (?)
 			temp reached
 			fallen below
 			raised above
 			outside of range
 		deadzones
-
+		what is the state of a probe? current temperature? whether it's on temperature vs target?
 	2. presets:
 		ability to define custom preset:
 			name
@@ -15,8 +19,10 @@
 	2a store temp as celsius internally but convert to fahrenheit as needed
 	2b labels in options flow
 	2c NL translations
-	3. Notifications when target temp is reached or has fallen below
+	3. Notifications
 		how to send?
+		allow user to configure service to call for notifications.
+			can I list the notify services?
 2. Need to be able to set target temp for probes
 		a. Protein selection
 		b. Doneness

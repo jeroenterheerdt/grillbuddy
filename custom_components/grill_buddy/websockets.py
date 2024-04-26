@@ -14,7 +14,16 @@ from homeassistant.helpers.dispatcher import (
     async_dispatcher_send,
 )
 
-from .const import DOMAIN, PROBES, PROBE_ID, PROBE_NAME
+from .const import (
+    DOMAIN,
+    PROBE_SOURCE,
+    PROBES,
+    PROBE_ID,
+    PROBE_NAME,
+    PROBE_PRESET,
+    PROBE_TEMPERATURE,
+    PRESETS,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -68,6 +77,9 @@ class GrillBuddyProbeView(HomeAssistantView):
             {
                 vol.Optional(PROBE_ID): vol.Coerce(int),
                 vol.Optional(PROBE_NAME): cv.string,
+                vol.Optional(PROBE_SOURCE): cv.string,
+                vol.Optional(PROBE_PRESET): vol.Or(int, None),
+                vol.Optional(PROBE_TEMPERATURE): vol.Or(int, float, None),
             }
         )
     )
@@ -79,6 +91,9 @@ class GrillBuddyProbeView(HomeAssistantView):
             probe = int(data[PROBE_ID])
         else:
             probe = None
+        # drop probe_temperature if present
+        if PROBE_TEMPERATURE in data:
+            del data[PROBE_TEMPERATURE]
         await coordinator.async_update_probe_config(probe, data)
         async_dispatcher_send(hass, DOMAIN + "_update_frontend")
         return self.json({"success": True})
@@ -98,6 +113,14 @@ def websocket_get_probes(hass, connection, msg):
     coordinator = hass.data[DOMAIN]["coordinator"]
     probes = coordinator.store.async_get_probes()
     connection.send_result(msg["id"], probes)
+
+
+@callback
+def websocket_get_presets(hass, connection, msg):
+    """Publish preset data."""
+    coordinator = hass.data[DOMAIN]["coordinator"]
+    presets = coordinator.store.async_get_presets()
+    connection.send_result(msg["id"], presets)
 
 
 async def async_register_websockets(hass):
@@ -120,5 +143,13 @@ async def async_register_websockets(hass):
         websocket_get_probes,
         websocket_api.BASE_COMMAND_MESSAGE_SCHEMA.extend(
             {vol.Required("type"): DOMAIN + "/" + PROBES}
+        ),
+    )
+    async_register_command(
+        hass,
+        DOMAIN + "/" + PRESETS,
+        websocket_get_presets,
+        websocket_api.BASE_COMMAND_MESSAGE_SCHEMA.extend(
+            {vol.Required("type"): DOMAIN + "/" + PRESETS}
         ),
     )

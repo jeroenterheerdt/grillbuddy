@@ -1,5 +1,5 @@
 import { HomeAssistant } from "custom-card-helpers";
-import { Config, Probe } from "../types";
+import { Config, Probe, Preset } from "../types";
 import { DOMAIN } from "../const";
 
 export const fetchConfig = (hass: HomeAssistant): Promise<Config> =>
@@ -23,6 +23,7 @@ export const saveProbe = (
   hass: HomeAssistant,
   config: Partial<Probe>,
 ): Promise<boolean> => {
+  console.log(config);
   return hass.callApi("POST", DOMAIN + "/probes", config);
 };
 
@@ -35,6 +36,11 @@ export const deleteProbe = (
     remove: true,
   });
 };
+
+export const fetchPresets = (hass: HomeAssistant): Promise<Preset[]> =>
+  hass.callWS({
+    type: DOMAIN + "/presets",
+  });
 
 /*export const fetchModules = (
   hass: HomeAssistant

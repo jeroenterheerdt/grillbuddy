@@ -1,15 +1,3 @@
-import { mdiBeeFlower } from "@mdi/js";
-import { formatTimeWithSeconds } from "custom-card-helpers";
-import {
-  HassEntity,
-  HassEntityAttributeBase,
-} from "home-assistant-js-websocket";
-import {
-  isConstructorDeclaration,
-  isParenthesizedTypeNode,
-  textSpanIsEmpty,
-} from "typescript";
-
 export interface Dictionary<TValue> {
   [id: string]: TValue;
 }
@@ -62,11 +50,13 @@ export class Probe {
   probe_id: number;
   probe_name: string;
   probe_source: string;
+  probe_preset?: number;
 
-  constructor(i: number, n: string, s: string) {
+  constructor(i: number, n: string, s: string, p?: number) {
     this.probe_id = i;
     this.probe_name = n;
     this.probe_source = s;
+    this.probe_preset = p;
   }
 }
 

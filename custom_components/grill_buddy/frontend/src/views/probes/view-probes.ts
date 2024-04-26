@@ -1,5 +1,4 @@
 import { TemplateResult, LitElement, html, CSSResultGroup, css } from "lit";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { query } from "lit/decorators.js";
 import { property, customElement } from "lit/decorators.js";
 import { HomeAssistant } from "custom-card-helpers";
@@ -10,13 +9,14 @@ import {
   fetchConfig,
   fetchProbes,
   saveProbe,
+  fetchPresets,
 } from "../../data/websockets";
 import { SubscribeMixin } from "../../subscribe-mixin";
 
-import { Config, Probe } from "../../types";
+import { Config, Preset, Probe } from "../../types";
 import { commonStyle } from "../../styles";
 import { localize } from "../../../localize/localize";
-import { DOMAIN, PROBE_NAME, PROBE_SOURCE } from "../../const";
+import { DOMAIN, PROBE_NAME, PROBE_PRESET, PROBE_SOURCE } from "../../const";
 
 @customElement("grill-buddy-view-probes")
 class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
@@ -26,6 +26,8 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
   @property({ type: Array })
   private probes: Probe[] = [];
 
+  @property({ type: Array })
+  private presets: Preset[] = [];
   @query("#nameInput")
   private nameInput!: HTMLInputElement;
 
@@ -56,19 +58,7 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
     }
     this.config = await fetchConfig(this.hass);
     this.probes = await fetchProbes(this.hass);
-
-    //add dummy module and mapping
-    /*const mods: SmartIrrigationModule[] = [];
-    const dummyModule: SmartIrrigationModule = {
-      id: undefined,
-      name: "--SELECT--",
-      description: "",
-      config: Object,
-      schema: Object,
-    };
-    mods.push(dummyModule);
-    mods.concat(await fetchModules(this.hass));
-    this.modules = mods;*/
+    this.presets = await fetchPresets(this.hass);
   }
 
   private handleAddProbe(): void {
@@ -76,6 +66,7 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
       probe_id: this.probes.length, //new probe will have ID that is equal to current probe length.
       probe_name: this.nameInput.value,
       probe_source: this.sourceInput.value,
+      probe_preset: undefined,
     };
 
     this.probes = [...this.probes, newProbe];
@@ -129,10 +120,10 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
         ([key, value]) =>
           (r = html`${r}
             <option
-              value="${value["id"]}"
-              ?selected="${selected === value["id"]}"
+              value="${value["preset_id"]}"
+              ?selected="${selected === value["preset_id"]}"
             >
-              ${value["id"]}: ${value["name"]}
+              ${value["preset_name"]} (${value["preset_target_temperature"]})
             </option>`),
       );
       return r;
@@ -152,14 +143,14 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
           <div class="card-content">
           </div>
           <div class="card-content">
-            <label for="name${index}"
+            <label for="probe_name${index}"
               >${localize(
                 "panels.probes.labels.name",
                 this.hass.language,
               )}:</label
             >
             <input
-              id="name${index}"
+              id="probe_name${index}"
               type="text"
               .value="${probe.probe_name}"
               @input="${(e: Event) =>
@@ -169,10 +160,10 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
                 })}"
             />
             <div class="probeline">
-              <label for="source${index}"
+              <label for="probe_source${index}"
                 >${localize("panels.probes.labels.source", this.hass.language)}:</label
               >
-              <input class="shortinput" id="source${index}" type="text""
+              <input id="probe_source${index}" type="text""
               .value="${probe.probe_source}"
               @input="${(e: Event) =>
                 this.handleEditProbe(index, {
@@ -180,6 +171,22 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
                   [PROBE_SOURCE]: (e.target as HTMLInputElement).value,
                 })}"
               />
+            </div>
+            <div class="probeline">
+            <label for="probe_preset${index}">${localize(
+              "panels.probes.labels.preset",
+              this.hass.language,
+            )}:</label>
+            <select
+            id="probe_preset${index}"
+            @change="${(e: Event) =>
+              this.handleEditProbe(index, {
+                ...probe,
+                [PROBE_PRESET]: parseInt((e.target as HTMLSelectElement).value),
+              })}"
+          >
+            ${this.renderTheOptions(this.presets, probe.probe_preset)}
+          </select>
             </div>
         </ha-card>
       `;
@@ -212,8 +219,17 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
                 "panels.probes.labels.source",
                 this.hass.language,
               )}:</label>
-              <input class="shortinput" id="sourceInput" type="text"/>
+              <input id="sourceInput" type="text"/>
               </div>
+
+              <div class="probeline">
+              <button @click="${this.handleAddProbe}">${localize(
+                "panels.probes.cards.add-probe.actions.add",
+                this.hass.language,
+              )}</button>
+              </div>
+              </ha-card>
+            <ha-card>
           ${Object.entries(this.probes).map(([key, value]) =>
             this.renderProbe(value, parseInt(key)),
           )}

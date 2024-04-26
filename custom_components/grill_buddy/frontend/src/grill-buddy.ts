@@ -4,6 +4,7 @@ import { HomeAssistant, navigate } from "custom-card-helpers";
 import { loadHaForm } from "./load-ha-elements";
 
 import "./views/general/view-general.ts";
+import "./views/probes/view-probes.ts";
 
 import { commonStyle } from "./styles";
 import { VERSION, PLATFORM } from "./const";
