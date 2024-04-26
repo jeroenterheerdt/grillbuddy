@@ -8,7 +8,7 @@ import { SubscribeMixin } from "../../subscribe-mixin";
 import { localize } from "../../../localize/localize";
 import { pick, handleError, parseBoolean } from "../../helpers";
 import { loadHaForm } from "../../load-ha-elements";
-import { GrillBuddyConfig } from "../../types";
+import { Config } from "../../types";
 import { commonStyle } from "../../styles";
 import { Path } from "../../common/navigation";
 import {
@@ -22,9 +22,9 @@ export class GrillBuddyViewGeneral extends SubscribeMixin(LitElement) {
   @property() narrow!: boolean;
   @property() path!: Path;
 
-  @property() data?: Partial<GrillBuddyConfig>;
+  @property() data?: Partial<Config>;
 
-  @property() config?: GrillBuddyConfig;
+  @property() config?: Config;
 
   public hassSubscribe(): Promise<UnsubscribeFunc>[] {
     this._fetchData();
@@ -67,7 +67,7 @@ export class GrillBuddyViewGeneral extends SubscribeMixin(LitElement) {
     }
   }
 
-  private saveData(changes: Partial<GrillBuddyConfig>) {
+  private saveData(changes: Partial<Config>) {
     if (!this.hass || !this.data) return;
 
     this.data = {

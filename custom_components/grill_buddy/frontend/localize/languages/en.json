@@ -50,6 +50,19 @@
       "description": "This page provides global settings.",
       "title": "General"
     },
+    "probes": {
+      "title": "Probes",
+      "description": "Set up your probes here",
+      "labels": {
+        "name": "Name",
+        "source": "Source"
+      },
+      "cards": {
+        "add-probe": {
+          "header": "Add probe"
+        }
+      }
+    },
     "help": {
       "title": "Help",
       "cards": {

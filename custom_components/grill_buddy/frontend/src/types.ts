@@ -4,13 +4,17 @@ import {
   HassEntity,
   HassEntityAttributeBase,
 } from "home-assistant-js-websocket";
-import { isConstructorDeclaration, isParenthesizedTypeNode, textSpanIsEmpty } from "typescript";
+import {
+  isConstructorDeclaration,
+  isParenthesizedTypeNode,
+  textSpanIsEmpty,
+} from "typescript";
 
 export interface Dictionary<TValue> {
   [id: string]: TValue;
 }
 
-export class GrillBuddyConfig {
+export class Config {
   constructor() {}
 }
 
@@ -54,6 +58,17 @@ export class Preset {
   }
 }
 
+export class Probe {
+  probe_id: number;
+  probe_name: string;
+  probe_source: string;
+
+  constructor(i: number, n: string, s: string) {
+    this.probe_id = i;
+    this.probe_name = n;
+    this.probe_source = s;
+  }
+}
 
 /*export class SmartIrrigationModule {
   id: number;

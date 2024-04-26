@@ -1,97 +1,42 @@
 import { HomeAssistant } from "custom-card-helpers";
-import {
-  GrillBuddyConfig
-} from "../types";
+import { Config, Probe } from "../types";
 import { DOMAIN } from "../const";
 
-export const fetchConfig = (
-  hass: HomeAssistant
-): Promise<GrillBuddyConfig> =>
+export const fetchConfig = (hass: HomeAssistant): Promise<Config> =>
   hass.callWS({
     type: DOMAIN + "/config",
   });
 
 export const saveConfig = (
   hass: HomeAssistant,
-  config: Partial<GrillBuddyConfig>
+  config: Partial<Config>,
 ): Promise<boolean> => {
   return hass.callApi("POST", DOMAIN + "/config", config);
 };
 
-/*export const fetchZones = (
-  hass: HomeAssistant
-): Promise<Dictionary<SmartIrrigationZone>> =>*/
-/*
-export const fetchZones = (
-  hass: HomeAssistant
-): Promise<SmartIrrigationZone[]> =>
+export const fetchProbes = (hass: HomeAssistant): Promise<Probe[]> =>
   hass.callWS({
-    type: DOMAIN + "/zones",
+    type: DOMAIN + "/probes",
   });
 
-export const saveZone = (
+export const saveProbe = (
   hass: HomeAssistant,
-  config: Partial<SmartIrrigationZone>
+  config: Partial<Probe>,
 ): Promise<boolean> => {
-  return hass.callApi("POST", DOMAIN + "/zones", config);
+  return hass.callApi("POST", DOMAIN + "/probes", config);
 };
 
-export const calculateZone = (
+export const deleteProbe = (
   hass: HomeAssistant,
-  zone_id: string
+  probe_id: string,
 ): Promise<boolean> => {
-  return hass.callApi("POST", DOMAIN + "/zones", {
-    id: zone_id,
-    calculate: true,
-    override_cache: true,
-  });
-};
-
-export const updateZone = (
-  hass: HomeAssistant,
-  zone_id: string
-): Promise<boolean> => {
-  return hass.callApi("POST", DOMAIN + "/zones", {
-    id: zone_id,
-    update: true,
-  });
-};
-export const calculateAllZones = (hass: HomeAssistant): Promise<boolean> => {
-  return hass.callApi("POST", DOMAIN + "/zones", {
-    calculate_all: true,
-  });
-};
-
-export const updateAllZones = (hass: HomeAssistant): Promise<boolean> => {
-  return hass.callApi("POST", DOMAIN + "/zones", {
-    update_all: true,
-  });
-};
-
-export const resetAllBuckets = (hass: HomeAssistant): Promise<boolean> => {
-  return hass.callApi("POST", DOMAIN + "/zones", {
-    reset_all_buckets: true,
-  });
-};
-
-export const clearAllWeatherdata = (hass: HomeAssistant): Promise<boolean> => {
-  return hass.callApi("POST", DOMAIN + "/zones", {
-    clear_all_weatherdata: true,
-  });
-};
-
-
-export const deleteZone = (
-  hass: HomeAssistant,
-  zone_id: string
-): Promise<boolean> => {
-  return hass.callApi("POST", DOMAIN + "/zones", {
-    id: zone_id,
+  return hass.callApi("POST", DOMAIN + "/probes", {
+    id: probe_id,
     remove: true,
   });
 };
 
-export const fetchModules = (
+/*export const fetchModules = (
   hass: HomeAssistant
 ): Promise<SmartIrrigationModule[]> =>
   hass.callWS({

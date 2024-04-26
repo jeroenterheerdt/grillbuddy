@@ -49,6 +49,9 @@ export class GrillBuddyPanel extends LitElement {
           <paper-tab page-name="general">
             ${localize("panels.general.title", this.hass.language)}
           </paper-tab>
+          <paper-tab page-name="probes">
+            ${localize("panels.probes.title", this.hass.language)}
+          </paper-tab>
           <paper-tab page-name="help"
             >${localize("panels.help.title", this.hass.language)}</paper-tab
           >
@@ -69,40 +72,49 @@ export class GrillBuddyPanel extends LitElement {
             .path=${path}
           ></grill-buddy-view-general>
         `;
+      case "probes":
+        return html`
+          <grill-buddy-view-probes
+            .hass=${this.hass}
+            .narrow=${this.narrow}
+            .path=${path}
+          ></grill-buddy-view-probes>
+        `;
       case "help":
         return html`<ha-card
           header="${localize(
             "panels.help.cards.how-to-get-help.title",
-            this.hass.language
+            this.hass.language,
           )}"
         >
           <div class="card-content">
-          ${localize(
-            "panels.help.cards.how-to-get-help.first-read-the",
-            this.hass.language
-          )} <a href="https://github.com/jeroenterheerdt/grill_buddy/wiki"
+            ${localize(
+              "panels.help.cards.how-to-get-help.first-read-the",
+              this.hass.language,
+            )}
+            <a href="https://github.com/jeroenterheerdt/grill_buddy/wiki"
               >${localize(
                 "panels.help.cards.how-to-get-help.wiki",
-                this.hass.language
+                this.hass.language,
               )}</a
-            >. ${localize(
+            >.
+            ${localize(
               "panels.help.cards.how-to-get-help.if-you-still-need-help",
-              this.hass.language
+              this.hass.language,
             )}
             ${localize(
               "panels.help.cards.how-to-get-help.or-open-a",
-              this.hass.language
+              this.hass.language,
             )}
-            <a
-              href="https://github.com/jeroenterheerdt/grill_buddy/issues"
+            <a href="https://github.com/jeroenterheerdt/grill_buddy/issues"
               >${localize(
                 "panels.help.cards.how-to-get-help.github-issue",
-                this.hass.language
+                this.hass.language,
               )}</a
             >
             (${localize(
               "panels.help.cards.how-to-get-help.english-only",
-              this.hass.language
+              this.hass.language,
             )}).
           </div></ha-card
         >`;

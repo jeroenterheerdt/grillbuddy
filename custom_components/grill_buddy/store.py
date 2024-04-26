@@ -87,19 +87,19 @@ class GrillBuddyStorage:
             if PROBES in data:
                 for probe in data[PROBES]:
                     probes[probe[PROBE_ID]] = ProbeEntry(
-                        id=probe[PROBE_ID],
-                        name=probe[PROBE_NAME],
-                        source=probe[PROBE_SOURCE],
-                        preset=probe[PROBE_PRESET],
+                        probe_id=probe[PROBE_ID],
+                        probe_name=probe[PROBE_NAME],
+                        probe_source=probe[PROBE_SOURCE],
+                        probe_preset=probe[PROBE_PRESET],
                     )
             if PRESETS in data:
                 for preset in data[PRESETS]:
                     presets[preset[PRESET_ID]] = PresetEntry(
-                        id=preset[PRESET_ID],
-                        name=preset[PRESET_NAME],
-                        protein=preset[PRESET_PROTEIN],
-                        doneness=preset[PRESET_DONENESS],
-                        target_temperature=preset[PRESET_TARGET_TEMPERATURE],
+                        preset_id=preset[PRESET_ID],
+                        preset_name=preset[PRESET_NAME],
+                        preset_protein=preset[PRESET_PROTEIN],
+                        preset_doneness=preset[PRESET_DONENESS],
+                        preset_target_temperature=preset[PRESET_TARGET_TEMPERATURE],
                     )
 
         self.config = config

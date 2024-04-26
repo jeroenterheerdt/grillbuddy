@@ -1,5 +1,5 @@
 	1. probes:
-		source (sensor)
+		source (sensor) - check that the source exists (see smart irrigation mappings?)
 		preset or just temp
 		notify when: (?)
 			temp reached
