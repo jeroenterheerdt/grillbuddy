@@ -18,6 +18,8 @@ from homeassistant.components.sensor import DOMAIN as PLATFORM
 
 from .const import (
     DOMAIN,
+    PRESET_NAME,
+    PRESET_TARGET_TEMPERATURE,
     PROBE_ID,
     PROBE_NAME,
     PROBE_SOURCE,
@@ -138,11 +140,12 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
     @property
     def should_poll(self) -> bool:
         """Return the polling state."""
-        return False
+        return True
 
     @property
     def state(self):
         """Return the state of the device."""
+        self._temperature = self.hass.states.get(self._source).state
         return self._temperature
 
     @property
@@ -169,10 +172,13 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
     def extra_state_attributes(self):
         """Return the data of the entity."""
 
+        preset = self.hass.data[DOMAIN][COORDINATOR].store.async_get_preset(
+            self._preset
+        )
         return {
             "id": self._id,
             "source": self._source,
-            "preset": self._preset,
+            "preset": f"{preset[PRESET_NAME]} ({preset[PRESET_TARGET_TEMPERATURE]} F)",
         }
 
     async def async_added_to_hass(self):

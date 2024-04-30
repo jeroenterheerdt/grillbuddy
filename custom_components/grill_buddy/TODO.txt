@@ -1,9 +1,11 @@
 	1. probes:
-		source (sensor) - check that the source exists (?)
+		source (sensor)
+			validate check that the source exists (?)
 			can this be a list of sensors instead of a textbox?
-			get the status of the sensor to put in the status for the probe?
 		preset or just temp
 			preset label should include temperature (F/C)
+			preset attribute should include temperature (F/C)
+			unit of sensor should be temperature (F/C)
 			whenever I change the preset on a probe, we create a new sensor. That should happen.
 		notify when: (?)
 			temp reached
@@ -12,6 +14,7 @@
 			outside of range
 		deadzones
 		what is the state of a probe? current temperature? whether it's on temperature vs target?
+			right now went with current temperature
 	2. presets:
 		ability to define custom preset:
 			name
