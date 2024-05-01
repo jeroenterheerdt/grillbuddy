@@ -17,6 +17,7 @@ import { Config, Preset, Probe } from "../../types";
 import { commonStyle } from "../../styles";
 import { localize } from "../../../localize/localize";
 import { DOMAIN, PROBE_NAME, PROBE_PRESET, PROBE_SOURCE } from "../../const";
+import { localizeTemperatureUnit, localizeTemperature } from "../../helpers";
 
 @customElement("grill-buddy-view-probes")
 class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
@@ -123,7 +124,12 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
               value="${value["preset_id"]}"
               ?selected="${selected === value["preset_id"]}"
             >
-              ${value["preset_name"]} (${value["preset_target_temperature"]})
+              ${value["preset_name"]}
+              (${localizeTemperature(
+                this.hass as HomeAssistant,
+                value["preset_target_temperature"],
+              )}
+              ${localizeTemperatureUnit(this.hass as HomeAssistant)})
             </option>`),
       );
       return r;

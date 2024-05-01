@@ -13,6 +13,7 @@ from homeassistant.helpers.dispatcher import (
     async_dispatcher_connect,
     async_dispatcher_send,
 )
+from homeassistant.util.unit_system import METRIC_SYSTEM
 
 from .const import ATTR_REMOVE, COORDINATOR, PROBES, DOMAIN, NAME, VERSION, MANUFACTURER
 from .localize import localize
@@ -119,6 +120,8 @@ class GrillBuddyCoordinator(DataUpdateCoordinator):
         self.entry = entry
         self.store = store
         self._subscriptions = []
+        # store system of measurement
+        self._ha_is_metric = self.hass.config.units is METRIC_SYSTEM
 
         self._subscriptions.append(
             async_dispatcher_connect(

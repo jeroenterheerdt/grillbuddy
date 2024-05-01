@@ -162,7 +162,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.BEEF,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.RARE,
-                PRESET_TARGET_TEMPERATURE: 125,
+                PRESET_TARGET_TEMPERATURE: 52,
             }
         )
         self.presets[1] = PresetEntry(
@@ -174,7 +174,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.BEEF,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMRARE,
-                PRESET_TARGET_TEMPERATURE: 140,
+                PRESET_TARGET_TEMPERATURE: 60,
             }
         )
         self.presets[2] = PresetEntry(
@@ -185,7 +185,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.BEEF,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUM,
-                PRESET_TARGET_TEMPERATURE: 150,
+                PRESET_TARGET_TEMPERATURE: 66,
             }
         )
         self.presets[3] = PresetEntry(
@@ -197,7 +197,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.BEEF,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMWELL,
-                PRESET_TARGET_TEMPERATURE: 160,
+                PRESET_TARGET_TEMPERATURE: 71,
             }
         )
         self.presets[4] = PresetEntry(
@@ -208,7 +208,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.BEEF,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.WELLDONE,
-                PRESET_TARGET_TEMPERATURE: 170,
+                PRESET_TARGET_TEMPERATURE: 77,
             }
         )
         self.presets[5] = PresetEntry(
@@ -218,7 +218,7 @@ class GrillBuddyStorage:
                     "defaults.presets.fish", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.FISH,
-                PRESET_TARGET_TEMPERATURE: 145,
+                PRESET_TARGET_TEMPERATURE: 63,
             }
         )
         self.presets[6] = PresetEntry(
@@ -228,7 +228,7 @@ class GrillBuddyStorage:
                     "defaults.presets.ground_beef", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.GROUNDBEEF,
-                PRESET_TARGET_TEMPERATURE: 160,
+                PRESET_TARGET_TEMPERATURE: 71,
             }
         )
         self.presets[7] = PresetEntry(
@@ -238,7 +238,7 @@ class GrillBuddyStorage:
                     "defaults.presets.ground_poultry", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.GROUNDPOULTRY,
-                PRESET_TARGET_TEMPERATURE: 165,
+                PRESET_TARGET_TEMPERATURE: 74,
             }
         )
         self.presets[8] = PresetEntry(
@@ -249,7 +249,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.RARE,
-                PRESET_TARGET_TEMPERATURE: 140,
+                PRESET_TARGET_TEMPERATURE: 60,
             }
         )
         self.presets[9] = PresetEntry(
@@ -261,7 +261,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMRARE,
-                PRESET_TARGET_TEMPERATURE: 145,
+                PRESET_TARGET_TEMPERATURE: 63,
             }
         )
         self.presets[10] = PresetEntry(
@@ -272,7 +272,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUM,
-                PRESET_TARGET_TEMPERATURE: 160,
+                PRESET_TARGET_TEMPERATURE: 71,
             }
         )
         self.presets[11] = PresetEntry(
@@ -284,7 +284,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMWELL,
-                PRESET_TARGET_TEMPERATURE: 165,
+                PRESET_TARGET_TEMPERATURE: 74,
             }
         )
         self.presets[12] = PresetEntry(
@@ -295,7 +295,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.WELLDONE,
-                PRESET_TARGET_TEMPERATURE: 170,
+                PRESET_TARGET_TEMPERATURE: 77,
             }
         )
         self.presets[13] = PresetEntry(
@@ -306,7 +306,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.PORK,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUM,
-                PRESET_TARGET_TEMPERATURE: 160,
+                PRESET_TARGET_TEMPERATURE: 71,
             }
         )
         self.presets[14] = PresetEntry(
@@ -318,7 +318,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.PORK,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMWELL,
-                PRESET_TARGET_TEMPERATURE: 165,
+                PRESET_TARGET_TEMPERATURE: 74,
             }
         )
         self.presets[15] = PresetEntry(
@@ -329,7 +329,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.PORK,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.WELLDONE,
-                PRESET_TARGET_TEMPERATURE: 170,
+                PRESET_TARGET_TEMPERATURE: 77,
             }
         )
         self.presets[16] = PresetEntry(
@@ -339,7 +339,7 @@ class GrillBuddyStorage:
                     "defaults.presets.poultry", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.POULTRY,
-                PRESET_TARGET_TEMPERATURE: 165,
+                PRESET_TARGET_TEMPERATURE: 74,
             }
         )
         self.presets[17] = PresetEntry(
@@ -349,7 +349,7 @@ class GrillBuddyStorage:
                     "defaults.presets.turkey", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.TURKEY,
-                PRESET_TARGET_TEMPERATURE: 165,
+                PRESET_TARGET_TEMPERATURE: 74,
             }
         )
         self.presets[18] = PresetEntry(
@@ -360,7 +360,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.RARE,
-                PRESET_TARGET_TEMPERATURE: 125,
+                PRESET_TARGET_TEMPERATURE: 52,
             }
         )
         self.presets[19] = PresetEntry(
@@ -372,7 +372,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMRARE,
-                PRESET_TARGET_TEMPERATURE: 140,
+                PRESET_TARGET_TEMPERATURE: 60,
             }
         )
         self.presets[20] = PresetEntry(
@@ -383,7 +383,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUM,
-                PRESET_TARGET_TEMPERATURE: 150,
+                PRESET_TARGET_TEMPERATURE: 66,
             }
         )
         self.presets[21] = PresetEntry(
@@ -395,7 +395,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMWELL,
-                PRESET_TARGET_TEMPERATURE: 160,
+                PRESET_TARGET_TEMPERATURE: 71,
             }
         )
         self.presets[22] = PresetEntry(
@@ -406,7 +406,7 @@ class GrillBuddyStorage:
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.WELLDONE,
-                PRESET_TARGET_TEMPERATURE: 165,
+                PRESET_TARGET_TEMPERATURE: 74,
             }
         )
 
