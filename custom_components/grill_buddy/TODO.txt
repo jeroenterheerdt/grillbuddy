@@ -3,10 +3,8 @@
 			validate check that the source exists (?)
 			can this be a list of sensors instead of a textbox?
 		preset or just temp
-			preset label should include temperature (F/C)
-			preset attribute should include temperature (F/C)
-			unit of sensor should be temperature (F/C)
 			whenever I change the preset on a probe, we create a new sensor. That should happen.
+
 		notify when: (?)
 			temp reached
 			fallen below
