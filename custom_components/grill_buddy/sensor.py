@@ -3,12 +3,14 @@ import logging
 from homeassistant.components.sensor.const import SensorDeviceClass
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import STATE_UNKNOWN, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.helpers.entity import generate_entity_id
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.event import async_track_state_change
 from homeassistant.helpers.dispatcher import (
     async_dispatcher_connect,
     async_dispatcher_send,
@@ -16,6 +18,7 @@ from homeassistant.helpers.dispatcher import (
 from homeassistant.util import slugify
 from homeassistant.components.sensor import DOMAIN as PLATFORM
 from homeassistant.util.unit_system import METRIC_SYSTEM
+
 
 from .const import (
     DOMAIN,
@@ -38,6 +41,7 @@ from .helpers import (
     get_localized_temperature,
     get_localized_temperature_unit,
     is_number,
+    parse_sensor_state,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -101,15 +105,44 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         self._id = id
         self._name = name
         self._source = source
+        self._state_listener = None
         self._preset = self._hass.data[DOMAIN][COORDINATOR].store.async_get_preset(
             preset
         )
         self._temperature = temperature
         self._system_is_metric = hass.config.units is METRIC_SYSTEM
 
+        self.async_watch_sensor_states()
         async_dispatcher_connect(
             hass, DOMAIN + "_config_updated", self.async_update_sensor_entity
         )
+
+    def async_watch_sensor_states(self):
+        if self._state_listener:
+            self._state_listener()
+        if self._source:
+            self._state_listener = async_track_state_change(
+                self._hass, self._source, self.async_sensor_state_changed
+            )
+        else:
+            self._state_listener = None
+
+    @callback
+    def async_sensor_state_changed(self, entity, old_state, new_state):
+        """Callback fired when a sensor state has changed."""
+
+        old_state = parse_sensor_state(old_state)
+        new_state = parse_sensor_state(new_state)
+        if new_state in (STATE_UNKNOWN, STATE_UNAVAILABLE):
+            # sensor is unknown at startup, state which comes after is considered as initial state
+            _LOGGER.debug("Initial state for {} is {}".format(entity, new_state))
+            return
+        if old_state == new_state:
+            # not a state change - ignore
+            return
+        if is_number(new_state):
+            self._temperature = float(new_state)
+            self.async_schedule_update_ha_state()
 
     @callback
     def async_update_sensor_entity(self, id=None):
@@ -118,6 +151,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             # get the new values from store and update sensor state
             probe = self.hass.data[DOMAIN]["coordinator"].store.async_get_probe(id)
             self._name = probe["name"]
+            self.async_watch_sensor_states()
             self.async_schedule_update_ha_state()
 
     @property
@@ -150,12 +184,11 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
     @property
     def should_poll(self) -> bool:
         """Return the polling state."""
-        return True
+        return False
 
     @property
     def state(self):
         """Return the state of the device."""
-        self._temperature = self.hass.states.get(self._source).state
         # check if temperature is above target temperature (in the future we should check against the condition set)
         # if so, send notification
         if (
@@ -166,6 +199,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         ):
             # notify but only if this is the first time or if the notification has been dismissed?
             k = 0
+            # self._hass.services.async_call("notify", "notifybyemail")
 
         # temperature is stored in C, so localize it before displaying
         return get_localized_temperature(self._temperature, self._system_is_metric)
@@ -210,3 +244,8 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
     async def async_will_remove_from_hass(self):
         await super().async_will_remove_from_hass()
         _LOGGER.debug("{} is removed from hass".format(self.entity_id))
+
+    def __dell__(self):
+        if self._state_listener:
+            self._state_listener()
+            self._state_listener = None

@@ -13,7 +13,6 @@
 		deadzones
 		what is the state of a probe? current temperature? whether it's on temperature vs target?
 			right now went with current temperature
-		get rid of polling and instead listen to any changes in source?
 	2. presets:
 		ability to define custom preset:
 			name
