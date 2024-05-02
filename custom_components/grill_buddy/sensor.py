@@ -1,6 +1,5 @@
 import logging
 
-
 from homeassistant.components.sensor.const import SensorDeviceClass
 
 from homeassistant.config_entries import ConfigEntry
@@ -35,7 +34,11 @@ from .const import (
     COORDINATOR,
 )
 from .localize import localize
-from .helpers import get_localized_temperature, get_localized_temperature_unit
+from .helpers import (
+    get_localized_temperature,
+    get_localized_temperature_unit,
+    is_number,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -98,7 +101,9 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         self._id = id
         self._name = name
         self._source = source
-        self._preset = preset
+        self._preset = self._hass.data[DOMAIN][COORDINATOR].store.async_get_preset(
+            preset
+        )
         self._temperature = temperature
         self._system_is_metric = hass.config.units is METRIC_SYSTEM
 
@@ -151,6 +156,17 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
     def state(self):
         """Return the state of the device."""
         self._temperature = self.hass.states.get(self._source).state
+        # check if temperature is above target temperature (in the future we should check against the condition set)
+        # if so, send notification
+        if (
+            is_number(self._temperature)
+            and is_number(self._preset[PRESET_TARGET_TEMPERATURE])
+            and float(self._temperature)
+            >= float(self._preset[PRESET_TARGET_TEMPERATURE])
+        ):
+            # notify but only if this is the first time or if the notification has been dismissed?
+            k = 0
+
         # temperature is stored in C, so localize it before displaying
         return get_localized_temperature(self._temperature, self._system_is_metric)
 
@@ -168,7 +184,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
 
     @property
     def suggested_display_precision(self):
-        return 0
+        return 1
 
     @property
     def suggested_unit_of_measurement(self):
@@ -178,14 +194,10 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
     def extra_state_attributes(self):
         """Return the data of the entity."""
 
-        preset = self.hass.data[DOMAIN][COORDINATOR].store.async_get_preset(
-            self._preset
-        )
-
         return {
             "id": self._id,
             "source": self._source,
-            "preset": f"{preset[PRESET_NAME]} ({get_localized_temperature(preset[PRESET_TARGET_TEMPERATURE], self._system_is_metric)} {get_localized_temperature_unit(self._system_is_metric)})",
+            "preset": f"{self._preset[PRESET_NAME]} ({get_localized_temperature(self._preset[PRESET_TARGET_TEMPERATURE], self._system_is_metric)} {get_localized_temperature_unit(self._system_is_metric)})",
         }
 
     async def async_added_to_hass(self):

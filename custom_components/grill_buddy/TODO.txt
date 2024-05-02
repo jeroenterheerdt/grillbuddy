@@ -13,11 +13,11 @@
 		deadzones
 		what is the state of a probe? current temperature? whether it's on temperature vs target?
 			right now went with current temperature
+		get rid of polling and instead listen to any changes in source?
 	2. presets:
 		ability to define custom preset:
 			name
 			target temperature
-	2a store temp as celsius internally but convert to fahrenheit as needed
 	2b labels in options flow
 	2c NL translations
 	3. Notifications
