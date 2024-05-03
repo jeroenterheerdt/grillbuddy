@@ -36,6 +36,10 @@ PRESET_PROTEIN = "preset_protein"
 PRESET_DONENESS = "preset_doneness"
 PRESET_TARGET_TEMPERATURE = "preset_target_temperature"
 
+# Probe States
+REACHED_TARGET_TEMPERATURE = "reached_target_temperature"
+BELOW_TARGET_TEMPERATURE = "below_target_temperature"
+
 
 class PRESET_PROTEIN_ENUM(Enum):
     BEEF = "beef"

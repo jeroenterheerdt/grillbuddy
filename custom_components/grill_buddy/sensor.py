@@ -35,6 +35,8 @@ from .const import (
     MANUFACTURER,
     SENSOR_ICON,
     COORDINATOR,
+    REACHED_TARGET_TEMPERATURE,
+    BELOW_TARGET_TEMPERATURE,
 )
 from .localize import localize
 from .helpers import (
@@ -111,13 +113,14 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         )
         self._temperature = temperature
         self._system_is_metric = hass.config.units is METRIC_SYSTEM
-
+        self._status = None
+        self._notification_sent = False
         self.async_watch_sensor_states()
         async_dispatcher_connect(
             hass, DOMAIN + "_config_updated", self.async_update_sensor_entity
         )
 
-    def async_watch_sensor_states(self):
+    async def async_watch_sensor_states(self):
         if self._state_listener:
             self._state_listener()
         if self._source:
@@ -128,7 +131,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             self._state_listener = None
 
     @callback
-    def async_sensor_state_changed(self, entity, old_state, new_state):
+    async def async_sensor_state_changed(self, entity, old_state, new_state):
         """Callback fired when a sensor state has changed."""
 
         old_state = parse_sensor_state(old_state)
@@ -142,10 +145,34 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             return
         if is_number(new_state):
             self._temperature = float(new_state)
+            # check if temperature is above target temperature (in the future we should check against the condition set)
+            # if enabled, send notification
+            if is_number(self._temperature) and is_number(
+                self._preset[PRESET_TARGET_TEMPERATURE]
+            ):
+                # if _temperature >= target_temp, set status accordingly
+                if float(self._temperature) >= float(
+                    self._preset[PRESET_TARGET_TEMPERATURE]
+                ):
+                    # set the status attribute
+                    self._status = REACHED_TARGET_TEMPERATURE
+                    if not self._notification_sent:
+                        # notify but only if this is the first time or if the notification has been dismissed?
+                        notify_data = {
+                            "message": "msg from code",
+                            "title": "title from code",
+                        }
+                        # await self._hass.services.async_call(
+                        #    "notify", "pushbullet", notify_data
+                        # )
+                        self._notification_sent = True
+                else:
+                    self._status = BELOW_TARGET_TEMPERATURE
+
             self.async_schedule_update_ha_state()
 
     @callback
-    def async_update_sensor_entity(self, id=None):
+    async def async_update_sensor_entity(self, id=None):
         """Update each probe as Sensor entity."""
         if self._id == id and self.hass and self.hass.data:
             # get the new values from store and update sensor state
@@ -189,17 +216,6 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
     @property
     def state(self):
         """Return the state of the device."""
-        # check if temperature is above target temperature (in the future we should check against the condition set)
-        # if so, send notification
-        if (
-            is_number(self._temperature)
-            and is_number(self._preset[PRESET_TARGET_TEMPERATURE])
-            and float(self._temperature)
-            >= float(self._preset[PRESET_TARGET_TEMPERATURE])
-        ):
-            # notify but only if this is the first time or if the notification has been dismissed?
-            k = 0
-            # self._hass.services.async_call("notify", "notifybyemail")
 
         # temperature is stored in C, so localize it before displaying
         return get_localized_temperature(self._temperature, self._system_is_metric)
@@ -232,6 +248,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             "id": self._id,
             "source": self._source,
             "preset": f"{self._preset[PRESET_NAME]} ({get_localized_temperature(self._preset[PRESET_TARGET_TEMPERATURE], self._system_is_metric)} {get_localized_temperature_unit(self._system_is_metric)})",
+            "status": self._status,
         }
 
     async def async_added_to_hass(self):
