@@ -499,8 +499,11 @@ class GrillBuddyStorage:
     @callback
     def async_get_preset(self, preset_id: int) -> PresetEntry:
         """Get an existing PresetEntry by id."""
-        res = self.presets.get(int(preset_id))
-        return attr.asdict(res) if res else None
+        if preset_id:
+            res = self.presets.get(int(preset_id))
+            return attr.asdict(res) if res else None
+        else:
+            return None
 
     @callback
     def async_get_presets(self):

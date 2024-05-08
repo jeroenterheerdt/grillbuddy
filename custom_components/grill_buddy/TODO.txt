@@ -3,8 +3,7 @@
 			validate check that the source exists (?)
 			can this be a list of sensors instead of a textbox?
 		preset or just temp
-			whenever I change the preset on a probe, we create a new sensor. That should happen.
-
+			svg in preset dropdown
 		notify when: (?)
 			temp reached
 			fallen below
@@ -21,6 +20,7 @@
 	2c NL translations
 	3. Notifications
 		how to send?
+		allow user to enable / disable notifications
 		allow user to configure service to call for notifications.
 			can I list the notify services?
 2. Need to be able to set target temp for probes

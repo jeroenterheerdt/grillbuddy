@@ -154,6 +154,14 @@ class GrillBuddyCoordinator(DataUpdateCoordinator):
                 return
             self.store.async_delete_probe(probe_id)
             await self.async_remove_entity(probe_id)
+        elif self.store.async_get_probe(probe_id):
+            # modify a zone
+            entry = self.store.async_update_probe(probe_id, data)
+            async_dispatcher_send(
+                self.hass, DOMAIN + "_config_updated", probe_id
+            )  # make sure to update the HA entity here by listening to this in sensor.py.
+            # this should be called by changes from the UI (by user) or by a calculation module (updating a duration), which should be done in python
+
         else:
             # create a probe
             entry = self.store.async_create_probe(data)

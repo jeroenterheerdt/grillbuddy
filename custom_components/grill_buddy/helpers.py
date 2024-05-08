@@ -31,7 +31,9 @@ def is_number(s):
 
 
 def parse_sensor_state(state):
-    if is_number(state.state):
+    if not state:
+        return STATE_UNKNOWN
+    elif is_number(state.state):
         return state.state
     else:
         if not state or not state.state:
