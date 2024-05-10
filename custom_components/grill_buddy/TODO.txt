@@ -17,6 +17,9 @@
 			IMPLEMENT THE BEHAVIOR FOR THESE ON UPDATE
 		lower / upper bound:
 			TEST THESE
+		attributes:
+			state update settings
+			confirm lower and upper bound are correct
 		notify on status change yes/no
 		what is the state of a probe? current temperature? whether it's on temperature vs target?
 			right now went with current temperature

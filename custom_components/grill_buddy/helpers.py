@@ -1,7 +1,23 @@
+from config.custom_components.grill_buddy.const import (
+    PROBE_LOWER_BOUND,
+    PROBE_UPPER_BOUND,
+)
 from homeassistant.const import (
     STATE_UNKNOWN,
     STATE_UNAVAILABLE,
 )
+
+
+def switch_probe_temperatures_to_C(data, system_is_metric):
+    if PROBE_UPPER_BOUND in data:
+        data[PROBE_UPPER_BOUND] = get_localized_temperature(
+            data[PROBE_UPPER_BOUND], system_is_metric
+        )
+    if PROBE_LOWER_BOUND in data:
+        data[PROBE_LOWER_BOUND] = get_localized_temperature(
+            data[PROBE_LOWER_BOUND], system_is_metric
+        )
+    return data
 
 
 def get_localized_temperature(val, system_is_metric):

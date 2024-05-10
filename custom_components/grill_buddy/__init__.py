@@ -1,5 +1,9 @@
 """The Smart Irrigation Integration."""
 import logging
+from config.custom_components.grill_buddy.helpers import (
+    get_localized_temperature,
+    switch_probe_temperatures_to_C,
+)
 from homeassistant.components.sensor import DOMAIN as PLATFORM
 from homeassistant.core import (
     callback,
@@ -15,7 +19,17 @@ from homeassistant.helpers.dispatcher import (
 )
 from homeassistant.util.unit_system import METRIC_SYSTEM
 
-from .const import ATTR_REMOVE, COORDINATOR, PROBES, DOMAIN, NAME, VERSION, MANUFACTURER
+from .const import (
+    ATTR_REMOVE,
+    COORDINATOR,
+    PROBE_LOWER_BOUND,
+    PROBE_UPPER_BOUND,
+    PROBES,
+    DOMAIN,
+    NAME,
+    VERSION,
+    MANUFACTURER,
+)
 from .localize import localize
 from .store import async_get_registry
 from .panel import (
@@ -155,15 +169,20 @@ class GrillBuddyCoordinator(DataUpdateCoordinator):
             self.store.async_delete_probe(probe_id)
             await self.async_remove_entity(probe_id)
         elif self.store.async_get_probe(probe_id):
-            # modify a zone
+            # modify a probe
+            data = switch_probe_temperatures_to_C(
+                data, self.hass.config.units is METRIC_SYSTEM
+            )
             entry = self.store.async_update_probe(probe_id, data)
-            async_dispatcher_send(
-                self.hass, DOMAIN + "_config_updated", probe_id
-            )  # make sure to update the HA entity here by listening to this in sensor.py.
-            # this should be called by changes from the UI (by user) or by a calculation module (updating a duration), which should be done in python
+            async_dispatcher_send(self.hass, DOMAIN + "_config_updated", probe_id)
 
         else:
             # create a probe
+            # convert into C here as necessary.
+            # store temperature in C!
+            data = switch_probe_temperatures_to_C(
+                data, self.hass.config.units is METRIC_SYSTEM
+            )
             entry = self.store.async_create_probe(data)
             async_dispatcher_send(self.hass, DOMAIN + "_register_entity", entry)
             self.store.async_get_config()

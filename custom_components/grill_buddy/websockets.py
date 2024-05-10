@@ -2,6 +2,7 @@ import datetime
 import voluptuous as vol
 import logging
 
+from config.custom_components.grill_buddy.helpers import get_localized_temperature
 from homeassistant.components import websocket_api
 from homeassistant.core import callback
 from homeassistant.components.http.data_validator import RequestDataValidator
@@ -119,6 +120,17 @@ def websocket_get_probes(hass, connection, msg):
     """Publish probe data."""
     coordinator = hass.data[DOMAIN]["coordinator"]
     probes = coordinator.store.async_get_probes()
+    # since this should only be called by the UI
+    # make sure to switch to F for temperatures as needed
+    # as they are stored in C in the system itself
+    if not coordinator._ha_is_metric:
+        for p in probes:
+            probes[p[PROBE_ID]][PROBE_LOWER_BOUND] = get_localized_temperature(
+                p[PROBE_LOWER_BOUND], False
+            )
+            probes[p[PROBE_ID]][PROBE_UPPER_BOUND] = get_localized_temperature(
+                p[PROBE_UPPER_BOUND], False
+            )
     connection.send_result(msg["id"], probes)
 
 

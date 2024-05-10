@@ -141,10 +141,10 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
             >
               ${value["preset_name"]}
               (${localizeTemperature(
-                this.hass as HomeAssistant,
+                this.config,
                 value["preset_target_temperature"],
               )}
-              ${localizeTemperatureUnit(this.hass as HomeAssistant)})
+              ${localizeTemperatureUnit(this.config)})
             </option>`),
       );
       return r;

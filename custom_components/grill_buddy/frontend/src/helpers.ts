@@ -197,8 +197,11 @@ export function sortAlphabetically(
   return stringVal(a) < stringVal(b) ? -1 : 1;
 }
 
-export function localizeTemperature(hass: HomeAssistant, val: number) {
-  if (localizeTemperatureUnit(hass) == "°F") {
+export function localizeTemperature(config, val?: number) {
+  if (val == undefined) {
+    return;
+  }
+  if (config.units != CONF_METRIC) {
     return Math.round(val * 1.8 + 32.0);
   } else {
     return val;

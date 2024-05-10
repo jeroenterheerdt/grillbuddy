@@ -24,10 +24,13 @@ from .const import (
     PRESET_NAME,
     PRESET_TARGET_TEMPERATURE,
     PROBE_ID,
+    PROBE_LOWER_BOUND,
     PROBE_NAME,
     PROBE_SOURCE,
     PROBE_PRESET,
+    PROBE_STATE_UPDATE_SETTING,
     PROBE_TEMPERATURE,
+    PROBE_UPPER_BOUND,
     PROBES,
     NAME,
     VERSION,
@@ -76,6 +79,9 @@ async def async_setup_entry(
             source=config[PROBE_SOURCE],
             preset=config[PROBE_PRESET],
             temperature=config[PROBE_TEMPERATURE],
+            lower_bound=config[PROBE_LOWER_BOUND],
+            upper_bound=config[PROBE_UPPER_BOUND],
+            state_update_setting=config[PROBE_STATE_UPDATE_SETTING],
         )
 
         hass.data[DOMAIN][PROBES][config[PROBE_ID]] = sensor_entity
@@ -95,8 +101,11 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         name: str,
         entity_id: str,
         source: str,
-        preset: float,
+        preset: int,
         temperature: float,
+        lower_bound: float,
+        upper_bound: float,
+        state_update_setting: int,
     ) -> None:
         """Initialize the sensor entity."""
         self._hass = hass
@@ -113,6 +122,9 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         self._temperature = temperature
         self._system_is_metric = hass.config.units is METRIC_SYSTEM
         self._status = None
+        self._lower_bound = lower_bound
+        self._upper_bound = upper_bound
+        self._state_update_setting = state_update_setting
         self._notification_sent = False
         self._hass.async_create_task(self.async_watch_sensor_states())
         # get status once as part of the constructor
@@ -185,8 +197,8 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             # get the new values from store and update sensor state
             probe = self.hass.data[DOMAIN]["coordinator"].store.async_get_probe(id)
             self._name = probe[PROBE_NAME]
-            await self.async_watch_sensor_states()
-            await self.async_schedule_update_ha_state()
+            self._hass.async_create_task(self.async_watch_sensor_states())
+            self._hass.async_create_task(self.async_schedule_update_ha_state())
 
     @property
     def device_info(self) -> dict:
@@ -250,8 +262,11 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
     @property
     def extra_state_attributes(self):
         """Return the data of the entity."""
+        localized_temperature_unit = get_localized_temperature_unit(
+            self._system_is_metric
+        )
         if self._preset:
-            preset_attribute = f"{self._preset[PRESET_NAME]} ({get_localized_temperature(self._preset[PRESET_TARGET_TEMPERATURE], self._system_is_metric)} {get_localized_temperature_unit(self._system_is_metric)})"
+            preset_attribute = f"{self._preset[PRESET_NAME]} ({get_localized_temperature(self._preset[PRESET_TARGET_TEMPERATURE], self._system_is_metric)} {localized_temperature_unit})"
         else:
             preset_attribute = None
         return {
@@ -259,6 +274,9 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             "source": self._source,
             "preset": preset_attribute,
             "status": self._status,
+            "lower bound": f"{get_localized_temperature(self._lower_bound,self._system_is_metric)} {localized_temperature_unit}",
+            "upper bound": f"{get_localized_temperature(self._upper_bound,self._system_is_metric)} {localized_temperature_unit}",
+            "state update setting": "TODO",
         }
 
     async def async_added_to_hass(self):
