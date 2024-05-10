@@ -18,7 +18,6 @@ from homeassistant.util import slugify
 from homeassistant.components.sensor import DOMAIN as PLATFORM
 from homeassistant.util.unit_system import METRIC_SYSTEM
 
-
 from .const import (
     DOMAIN,
     PRESET_NAME,
@@ -33,6 +32,8 @@ from .const import (
     PROBE_UPPER_BOUND,
     PROBES,
     NAME,
+    UNIT_DEGREES_C,
+    UNIT_DEGREES_F,
     VERSION,
     MANUFACTURER,
     SENSOR_ICON,
@@ -42,6 +43,7 @@ from .const import (
 )
 from .localize import localize
 from .helpers import (
+    convert_temperatures,
     get_localized_temperature,
     get_localized_temperature_unit,
     is_number,
@@ -162,6 +164,11 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             return
         if is_number(new_state):
             self._temperature = float(new_state)
+            # if system is not metric, convert to metric before proceeding
+            if not self._system_is_metric:
+                self._temperature = convert_temperatures(
+                    UNIT_DEGREES_F, UNIT_DEGREES_C, self._temperature
+                )
             # check if temperature is above target temperature (in the future we should check against the condition set)
             # if enabled, send notification
             if (
@@ -197,8 +204,13 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             # get the new values from store and update sensor state
             probe = self.hass.data[DOMAIN]["coordinator"].store.async_get_probe(id)
             self._name = probe[PROBE_NAME]
-            self._hass.async_create_task(self.async_watch_sensor_states())
-            self._hass.async_create_task(self.async_schedule_update_ha_state())
+            self._lower_bound = probe[PROBE_LOWER_BOUND]
+            self._upper_bound = probe[PROBE_UPPER_BOUND]
+            self._state_update_setting = probe[PROBE_STATE_UPDATE_SETTING]
+            self._source = probe[PROBE_SOURCE]
+            self._preset = probe[PROBE_PRESET]
+            await self.async_watch_sensor_states()
+            await self.async_schedule_update_ha_state()
 
     @property
     def device_info(self) -> dict:
@@ -269,6 +281,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             preset_attribute = f"{self._preset[PRESET_NAME]} ({get_localized_temperature(self._preset[PRESET_TARGET_TEMPERATURE], self._system_is_metric)} {localized_temperature_unit})"
         else:
             preset_attribute = None
+        # if self._state_update_setting is not None:
         return {
             "id": self._id,
             "source": self._source,

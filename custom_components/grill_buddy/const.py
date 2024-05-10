@@ -58,6 +58,14 @@ STATE_UPDATE_SETTINGS = "stateupdatesettings"
 STATE_UPDATE_SETTING_ID = "stateupdatesetting_id"
 STATE_UPDATE_SETTING_NAME = "stateupdatesetting_name"
 
+# Units
+UNIT_DEGREES_C = "°C"
+UNIT_DEGREES_F = "°F"
+UNIT_DEGREES_K = "K"
+
+# Conversion factors
+K_TO_C_FACTOR = 273.15  # K-factor = C, C+factor=K
+
 
 class PRESET_PROTEIN_ENUM(Enum):
     BEEF = "beef"
