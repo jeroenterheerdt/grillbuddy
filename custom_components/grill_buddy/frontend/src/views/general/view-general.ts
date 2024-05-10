@@ -50,9 +50,8 @@ export class GrillBuddyViewGeneral extends SubscribeMixin(LitElement) {
       CONF_AUTO_CLEAR_ENABLED,
       CONF_CLEAR_TIME,
     ]);*/
-    this.data = []
+    this.data = this.config;
 
-    /*Object.entries(this.data).forEach(([key, value]) => console.log(key, value));*/
   }
 
   firstUpdated() {

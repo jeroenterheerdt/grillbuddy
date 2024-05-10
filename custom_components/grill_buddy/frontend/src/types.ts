@@ -3,7 +3,10 @@ export interface Dictionary<TValue> {
 }
 
 export class Config {
-  constructor() {}
+  units: string;
+  constructor(u: string) {
+    this.units = u;
+  }
 }
 
 export enum PresetProtein {
@@ -23,6 +26,16 @@ export enum PresetDoneness {
   Medium = "medium",
   MediumWell = "mediumwell",
   WellDone = "welldone",
+}
+
+export class StateUpdateSettings {
+  id: number;
+  name: string;
+
+  constructor(i: number, n: string) {
+    this.id = i;
+    this.name = n;
+  }
 }
 export class Preset {
   id: number;
@@ -51,12 +64,26 @@ export class Probe {
   probe_name: string;
   probe_source: string;
   probe_preset?: number;
+  probe_lower_bound?: number;
+  probe_upper_bound?: number;
+  probe_state_update_setting?: number;
 
-  constructor(i: number, n: string, s: string, p?: number) {
+  constructor(
+    i: number,
+    n: string,
+    s: string,
+    p?: number,
+    l?: number,
+    u?: number,
+    sus?: number,
+  ) {
     this.probe_id = i;
     this.probe_name = n;
     this.probe_source = s;
     this.probe_preset = p;
+    this.probe_lower_bound = l;
+    this.probe_upper_bound = u;
+    this.probe_state_update_setting = sus;
   }
 }
 

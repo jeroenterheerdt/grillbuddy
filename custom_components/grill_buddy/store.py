@@ -8,6 +8,9 @@ from homeassistant.helpers.storage import Store
 from homeassistant.util.unit_system import METRIC_SYSTEM
 
 from .const import (
+    CONF_IMPERIAL,
+    CONF_METRIC,
+    CONF_UNITS,
     DOMAIN,
     PRESET_DONENESS,
     PRESET_DONENESS_ENUM,
@@ -16,13 +19,22 @@ from .const import (
     PRESET_PROTEIN,
     PRESET_PROTEIN_ENUM,
     PRESET_TARGET_TEMPERATURE,
+    PROBE_LOWER_BOUND,
+    PROBE_LOWER_BOUND_DEFAULT,
+    PROBE_STATE_UPDATE_SETTING,
+    PROBE_STATE_UPDATE_SETTING_DEFAULT,
     PROBE_TEMPERATURE,
     PRESETS,
+    PROBE_UPPER_BOUND,
+    PROBE_UPPER_BOUND_DEFAULT,
     PROBES,
     PROBE_ID,
     PROBE_NAME,
     PROBE_SOURCE,
     PROBE_PRESET,
+    STATE_UPDATE_SETTING_ID,
+    STATE_UPDATE_SETTING_NAME,
+    STATE_UPDATE_SETTINGS,
 )
 from .localize import localize
 
@@ -43,6 +55,11 @@ class ProbeEntry:
     probe_source = attr.ib(type=str, default=None)
     probe_preset = attr.ib(type=int, default=None)
     probe_temperature = attr.ib(type=float, default=None)
+    probe_upper_bound = attr.ib(type=float, default=PROBE_UPPER_BOUND_DEFAULT)
+    probe_lower_bound = attr.ib(type=float, default=PROBE_LOWER_BOUND_DEFAULT)
+    probe_state_update_setting = attr.ib(
+        type=int, default=PROBE_STATE_UPDATE_SETTING_DEFAULT
+    )
 
 
 @attr.s(slots=True, frozen=True)
@@ -57,8 +74,18 @@ class PresetEntry:
 
 
 @attr.s(slots=True, frozen=True)
+class StateUpdateSettingEntry:
+    """StateUpdateSettingEntry storage Entry."""
+
+    stateupdatesetting_id = attr.ib(type=int, default=None)
+    stateupdatesetting_name = attr.ib(type=str, default=None)
+
+
+@attr.s(slots=True, frozen=True)
 class Config:
     """(General) Config storage Entry."""
+
+    units = attr.ib(type=str, default=None)
 
 
 class MigratableStore(Store):
@@ -75,17 +102,29 @@ class GrillBuddyStorage:
         self.config: Config = Config()
         self.probes: MutableMapping[ProbeEntry] = {}
         self.presets: MutableMapping[PresetEntry] = {}
+        self.stateupdatesettings: MutableMapping[StateUpdateSettingEntry] = {}
         self._store = MigratableStore(hass, STORAGE_VERSION, STORAGE_KEY)
 
     async def async_load(self) -> None:
         """Load the registry."""
         data = await self._store.async_load()
-        config: Config = Config()
+        config: Config = Config(
+            units=CONF_METRIC
+            if self.hass.config.units is METRIC_SYSTEM
+            else CONF_IMPERIAL
+        )
         probes: "OrderedDict[str, ProbeEntry]" = OrderedDict()
         presets: "OrderedDict[str, PresetEntry]" = OrderedDict()
+        stateupdatesettings: "OrderedDict[str, StateUpdateSettingEntry]" = OrderedDict()
         if data is not None:
-            config = Config()
-
+            config = Config(
+                units=data["config"].get(
+                    CONF_UNITS,
+                    CONF_METRIC
+                    if self.hass.config.units is METRIC_SYSTEM
+                    else CONF_IMPERIAL,
+                )
+            )
             if PROBES in data:
                 for probe in data[PROBES]:
                     probes[probe[PROBE_ID]] = ProbeEntry(
@@ -94,6 +133,16 @@ class GrillBuddyStorage:
                         probe_source=probe[PROBE_SOURCE],
                         probe_preset=probe[PROBE_PRESET],
                         probe_temperature=probe[PROBE_TEMPERATURE],
+                        probe_upper_bound=probe.get(
+                            PROBE_UPPER_BOUND, PROBE_UPPER_BOUND_DEFAULT
+                        ),
+                        probe_lower_bound=probe.get(
+                            PROBE_LOWER_BOUND, PROBE_LOWER_BOUND_DEFAULT
+                        ),
+                        probe_state_update_setting=probe.get(
+                            PROBE_STATE_UPDATE_SETTING,
+                            PROBE_STATE_UPDATE_SETTING_DEFAULT,
+                        ),
                     )
             if PRESETS in data:
                 for preset in data[PRESETS]:
@@ -104,10 +153,19 @@ class GrillBuddyStorage:
                         preset_doneness=preset[PRESET_DONENESS],
                         preset_target_temperature=preset[PRESET_TARGET_TEMPERATURE],
                     )
+            if STATE_UPDATE_SETTINGS in data:
+                for sus in data[STATE_UPDATE_SETTINGS]:
+                    stateupdatesettings[
+                        sus[STATE_UPDATE_SETTING_ID]
+                    ] = StateUpdateSettingEntry(
+                        stateupdatesetting_id=sus[STATE_UPDATE_SETTING_ID],
+                        stateupdatesetting_name=sus[STATE_UPDATE_SETTING_NAME],
+                    )
 
         self.config = config
         self.probes = probes
         self.presets = presets
+        self.stateupdatesettings = stateupdatesettings
 
         # not needed? should trigger from init?
         # await self.set_up_factory_defaults()
@@ -117,6 +175,8 @@ class GrillBuddyStorage:
             await self.async_factory_default_probes()
         if not self.presets:
             await self.async_factory_default_presets()
+        if not self.stateupdatesettings:
+            await self.async_factory_default_stateupdatesettings()
         self.async_schedule_save()
 
     async def async_factory_default_probes(self):
@@ -151,6 +211,53 @@ class GrillBuddyStorage:
     medium well 160F
     well done 165F
     """
+
+    async def async_factory_default_stateupdatesettings(self):
+        self.stateupdatesettings[0] = StateUpdateSettingEntry(
+            **{
+                STATE_UPDATE_SETTING_ID: 0,
+                STATE_UPDATE_SETTING_NAME: localize(
+                    "state_update_settings.target_temperature_reached",
+                    self.hass.config.language,
+                ),
+            }
+        )
+        self.stateupdatesettings[1] = StateUpdateSettingEntry(
+            **{
+                STATE_UPDATE_SETTING_ID: 1,
+                STATE_UPDATE_SETTING_NAME: localize(
+                    "state_update_settings.within_bounds",
+                    self.hass.config.language,
+                ),
+            }
+        )
+        self.stateupdatesettings[2] = StateUpdateSettingEntry(
+            **{
+                STATE_UPDATE_SETTING_ID: 2,
+                STATE_UPDATE_SETTING_NAME: localize(
+                    "state_update_settings.outside_bounds",
+                    self.hass.config.language,
+                ),
+            }
+        )
+        self.stateupdatesettings[3] = StateUpdateSettingEntry(
+            **{
+                STATE_UPDATE_SETTING_ID: 3,
+                STATE_UPDATE_SETTING_NAME: localize(
+                    "state_update_settings.below_lower_bound",
+                    self.hass.config.language,
+                ),
+            }
+        )
+        self.stateupdatesettings[4] = StateUpdateSettingEntry(
+            **{
+                STATE_UPDATE_SETTING_ID: 4,
+                STATE_UPDATE_SETTING_NAME: localize(
+                    "state_update_settings.above_upper_bound",
+                    self.hass.config.language,
+                ),
+            }
+        )
 
     async def async_factory_default_presets(self):
         # Beef
@@ -511,6 +618,15 @@ class GrillBuddyStorage:
 
         res = []
         for key, val in self.presets.items():
+            res.append(attr.asdict(val))
+        return res
+
+    @callback
+    def async_get_state_update_settings(self):
+        """Get all StateUpdateSettingsEntries"""
+
+        res = []
+        for key, val in self.stateupdatesettings.items():
             res.append(attr.asdict(val))
         return res
 

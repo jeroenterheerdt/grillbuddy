@@ -10,13 +10,22 @@ import {
   fetchProbes,
   saveProbe,
   fetchPresets,
+  fetchStateUpdateSettings,
 } from "../../data/websockets";
 import { SubscribeMixin } from "../../subscribe-mixin";
 
-import { Config, Preset, Probe } from "../../types";
+import { Config, Preset, Probe, StateUpdateSettings } from "../../types";
 import { commonStyle } from "../../styles";
 import { localize } from "../../../localize/localize";
-import { DOMAIN, PROBE_NAME, PROBE_PRESET, PROBE_SOURCE } from "../../const";
+import {
+  DOMAIN,
+  PROBE_LOWER_BOUND,
+  PROBE_NAME,
+  PROBE_PRESET,
+  PROBE_SOURCE,
+  PROBE_STATE_UPDATE_SETTING,
+  PROBE_UPPER_BOUND,
+} from "../../const";
 import { localizeTemperatureUnit, localizeTemperature } from "../../helpers";
 
 @customElement("grill-buddy-view-probes")
@@ -29,6 +38,10 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
 
   @property({ type: Array })
   private presets: Preset[] = [];
+
+  @property({ type: Array })
+  private state_update_settings: StateUpdateSettings[] = [];
+
   @query("#nameInput")
   private nameInput!: HTMLInputElement;
 
@@ -58,8 +71,10 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
       return;
     }
     this.config = await fetchConfig(this.hass);
+    console.log(this.config);
     this.probes = await fetchProbes(this.hass);
     this.presets = await fetchPresets(this.hass);
+    this.state_update_settings = await fetchStateUpdateSettings(this.hass);
   }
 
   private handleAddProbe(): void {
@@ -136,6 +151,33 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
     }
   }
 
+  private renderTheUpdateStatusWhenOptions(
+    thelist: object,
+    selected?: number,
+  ): TemplateResult {
+    if (!this.hass) {
+      return html``;
+    } else {
+      let r = html`<option value="" ?selected=${
+        selected === undefined
+      }">---${localize(
+        "common.labels.select",
+        this.hass.language,
+      )}---</option>`;
+      Object.entries(thelist).map(
+        ([key, value]) =>
+          (r = html`${r}
+            <option
+              value="${value["stateupdatesetting_id"]}"
+              ?selected="${selected === value["stateupdatesetting_id"]}"
+            >
+              ${value["stateupdatesetting_name"]}
+            </option>`),
+      );
+      return r;
+    }
+  }
+
   private renderProbe(probe: Probe, index: number): TemplateResult {
     if (!this.hass) {
       return html``;
@@ -169,7 +211,7 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
               <label for="probe_source${index}"
                 >${localize("panels.probes.labels.source", this.hass.language)}:</label
               >
-              <input id="probe_source${index}" type="text""
+              <input id="probe_source${index}" type="text"
               .value="${probe.probe_source}"
               @input="${(e: Event) =>
                 this.handleEditProbe(index, {
@@ -194,6 +236,52 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
             ${this.renderTheOptions(this.presets, probe.probe_preset)}
           </select>
             </div>
+            <div class="probeline">
+            <label for="probe_lower_bound${index}">${localize(
+              "panels.probes.labels.lower_bound",
+              this.hass.language,
+            )}:</label>
+      <input id="probe_lower_bound${index}" class="shortinput" type="text"
+      .value="${probe.probe_lower_bound}"
+      @input="${(e: Event) =>
+        this.handleEditProbe(index, {
+          ...probe,
+          [PROBE_LOWER_BOUND]: parseFloat((e.target as HTMLInputElement).value),
+        })}"
+      /> ${localizeTemperatureUnit(this.config)}
+      </div>
+      <div class="probeline">
+      <label for="probe_upper_bound${index}">${localize(
+        "panels.probes.labels.upper_bound",
+        this.hass.language,
+      )}:</label>
+<input id="probe_upper_bound${index}" class="shortinput" type="text"
+.value="${probe.probe_upper_bound}"
+@input="${(e: Event) =>
+        this.handleEditProbe(index, {
+          ...probe,
+          [PROBE_UPPER_BOUND]: parseFloat((e.target as HTMLInputElement).value),
+        })}"
+/> ${localizeTemperatureUnit(this.config)}
+</div>
+<div class="probeline">
+            <label for="probe_state_update_setting${index}">${localize(
+              "panels.probes.labels.state_update_setting",
+              this.hass.language,
+            )}:</label>
+            <select
+            id="probe_state_update_setting${index}"
+            @change="${(e: Event) =>
+              this.handleEditProbe(index, {
+                ...probe,
+                [PROBE_STATE_UPDATE_SETTING]: parseInt(
+                  (e.target as HTMLSelectElement).value,
+                ),
+              })}"
+          >
+            ${this.renderTheUpdateStatusWhenOptions(this.state_update_settings, probe.probe_state_update_setting)}
+          </select>
+            </div>
         </ha-card>
       `;
     }
@@ -204,42 +292,52 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
       return html``;
     } else {
       return html`
-        <ha-card header="${localize("panels.probes.title", this.hass.language)}">
+        <ha-card
+          header="${localize("panels.probes.title", this.hass.language)}"
+        >
           <div class="card-content">
             ${localize("panels.probes.description", this.hass.language)}
           </div>
         </ha-card>
-          <ha-card header="${localize(
+        <ha-card
+          header="${localize(
             "panels.probes.cards.add-probe.header",
             this.hass.language,
-          )}">
-            <div class="card-content">
-              <div class="probeline"><label for="nameInput">${localize(
-                "panels.probes.labels.name",
-                this.hass.language,
-              )}:</label>
-              <input id="nameInput" type="text"/>
-              </div>
-              <div class="probeline">
-              <label for="sourceInput">${localize(
-                "panels.probes.labels.source",
-                this.hass.language,
-              )}:</label>
-              <input id="sourceInput" type="text"/>
-              </div>
+          )}"
+        >
+          <div class="card-content">
+            <div class="probeline">
+              <label for="nameInput"
+                >${localize(
+                  "panels.probes.labels.name",
+                  this.hass.language,
+                )}:</label
+              >
+              <input id="nameInput" type="text" />
+            </div>
+            <div class="probeline">
+              <label for="sourceInput"
+                >${localize(
+                  "panels.probes.labels.source",
+                  this.hass.language,
+                )}:</label
+              >
+              <input id="sourceInput" type="text" />
+            </div>
 
-              <div class="probeline">
-              <button @click="${this.handleAddProbe}">${localize(
-                "panels.probes.cards.add-probe.actions.add",
-                this.hass.language,
-              )}</button>
-              </div>
-              </ha-card>
-            <ha-card>
-          ${Object.entries(this.probes).map(([key, value]) =>
-            this.renderProbe(value, parseInt(key)),
-          )}
+            <div class="probeline">
+              <button @click="${this.handleAddProbe}">
+                ${localize(
+                  "panels.probes.cards.add-probe.actions.add",
+                  this.hass.language,
+                )}
+              </button>
+            </div>
+          </div>
         </ha-card>
+        ${Object.entries(this.probes).map(([key, value]) =>
+          this.renderProbe(value, parseInt(key)),
+        )}
       `;
     }
   }

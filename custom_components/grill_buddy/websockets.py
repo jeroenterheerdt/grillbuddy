@@ -16,13 +16,17 @@ from homeassistant.helpers.dispatcher import (
 
 from .const import (
     DOMAIN,
+    PROBE_LOWER_BOUND,
     PROBE_SOURCE,
+    PROBE_STATE_UPDATE_SETTING,
+    PROBE_UPPER_BOUND,
     PROBES,
     PROBE_ID,
     PROBE_NAME,
     PROBE_PRESET,
     PROBE_TEMPERATURE,
     PRESETS,
+    STATE_UPDATE_SETTINGS,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -80,6 +84,9 @@ class GrillBuddyProbeView(HomeAssistantView):
                 vol.Optional(PROBE_SOURCE): cv.string,
                 vol.Optional(PROBE_PRESET): vol.Or(int, None),
                 vol.Optional(PROBE_TEMPERATURE): vol.Or(int, float, None),
+                vol.Optional(PROBE_LOWER_BOUND): vol.Or(int, float, None),
+                vol.Optional(PROBE_UPPER_BOUND): vol.Or(int, float, None),
+                vol.Optional(PROBE_STATE_UPDATE_SETTING): vol.Or(int, None),
             }
         )
     )
@@ -123,6 +130,14 @@ def websocket_get_presets(hass, connection, msg):
     connection.send_result(msg["id"], presets)
 
 
+@callback
+def websocket_get_state_update_settings(hass, connection, msg):
+    """Publish state update settings data."""
+    coordinator = hass.data[DOMAIN]["coordinator"]
+    sus = coordinator.store.async_get_state_update_settings()
+    connection.send_result(msg["id"], sus)
+
+
 async def async_register_websockets(hass):
     hass.http.register_view(GrillBuddyConfigView)
     hass.http.register_view(GrillBuddyProbeView)
@@ -151,5 +166,13 @@ async def async_register_websockets(hass):
         websocket_get_presets,
         websocket_api.BASE_COMMAND_MESSAGE_SCHEMA.extend(
             {vol.Required("type"): DOMAIN + "/" + PRESETS}
+        ),
+    )
+    async_register_command(
+        hass,
+        DOMAIN + "/" + STATE_UPDATE_SETTINGS,
+        websocket_get_state_update_settings,
+        websocket_api.BASE_COMMAND_MESSAGE_SCHEMA.extend(
+            {vol.Required("type"): DOMAIN + "/" + STATE_UPDATE_SETTINGS}
         ),
     )

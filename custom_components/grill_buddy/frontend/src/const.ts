@@ -10,3 +10,10 @@ export const PROBE_ID = "probe_id";
 export const PROBE_NAME = "probe_name";
 export const PROBE_SOURCE = "probe_source";
 export const PROBE_PRESET = "probe_preset";
+export const PROBE_LOWER_BOUND = "probe_lower_bound";
+export const PROBE_UPPER_BOUND = "probe_upper_bound";
+export const PROBE_STATE_UPDATE_SETTING = "probe_state_update_setting";
+
+export const CONF_METRIC = "metric";
+export const UNIT_F = "°F";
+export const UNIT_C = "°C";

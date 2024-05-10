@@ -1,15 +1,23 @@
+	0.general:
+		notification service
+		notification cooldown (s)
 	1. probes:
 		source (sensor)
 			validate check that the source exists (?)
 			can this be a list of sensors instead of a textbox?
 		preset or just temp
 			svg in preset dropdown
-		notify when: (?)
+		update status when:
 			temp reached
 			fallen below
 			raised above
+			inside of range
 			outside of range
-		deadzones
+
+			IMPLEMENT THE BEHAVIOR FOR THESE ON UPDATE
+		lower / upper bound:
+			TEST THESE
+		notify on status change yes/no
 		what is the state of a probe? current temperature? whether it's on temperature vs target?
 			right now went with current temperature
 	2. presets:

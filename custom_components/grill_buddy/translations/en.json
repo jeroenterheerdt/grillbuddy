@@ -44,5 +44,12 @@
       "veal_medium_well": "Veal (medium well)",
       "veal_well_done": "Veal (well done)"
     }
+  },
+  "state_update_settings": {
+    "target_temperature_reached": "Target temperature reached",
+    "within_bounds": "Temperature within bounds",
+    "outside_bounds": "Temperature outside bounds",
+    "above_upper_bound": "Temperature above upper bound",
+    "below_lower_bound": "Temperature below lower bound"
   }
 }

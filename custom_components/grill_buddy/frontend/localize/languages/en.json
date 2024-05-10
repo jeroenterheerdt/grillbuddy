@@ -56,7 +56,10 @@
       "labels": {
         "name": "Name",
         "source": "Source",
-        "preset": "Preset"
+        "preset": "Preset",
+        "state_update_setting": "Update state when",
+        "upper_bound": "Upper bound",
+        "lower_bound": "Lower bound"
       },
       "cards": {
         "add-probe": {

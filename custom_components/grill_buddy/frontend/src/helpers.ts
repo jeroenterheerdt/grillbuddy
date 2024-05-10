@@ -3,6 +3,7 @@ import { HomeAssistant, stateIcon, fireEvent } from "custom-card-helpers";
 import { HassEntity } from "home-assistant-js-websocket";
 import { Dictionary } from "./types";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
+import { CONF_METRIC, UNIT_C, UNIT_F } from "./const";
 
 export function getDomain(entity: string | HassEntity) {
   const entity_id: string =
@@ -204,9 +205,8 @@ export function localizeTemperature(hass: HomeAssistant, val: number) {
   }
 }
 
-export function localizeTemperatureUnit(hass: HomeAssistant) {
-  const system_is_metric = hass.config.unit_system.temperature == "°F";
-  if (system_is_metric) {
-    return "°F";
-  } else return "°C";
+export function localizeTemperatureUnit(config) {
+  if (config.units == CONF_METRIC) {
+    return UNIT_C;
+  } else return UNIT_F;
 }
