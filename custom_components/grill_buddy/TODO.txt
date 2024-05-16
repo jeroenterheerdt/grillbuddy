@@ -5,6 +5,8 @@
 		source (sensor)
 			validate check that the source exists (?)
 			can this be a list of sensors instead of a textbox?
+			something like: barf = hass.data["sensor"]
+			IF THIS WORKS ALSO ADD TO SMART IRRIGATION!
 		preset or just temp
 			svg in preset dropdown
 		update status when:
@@ -15,11 +17,6 @@
 			outside of range
 
 			IMPLEMENT THE BEHAVIOR FOR THESE ON UPDATE
-		lower / upper bound:
-			TEST THESE
-			HA does not seem to update.  2024-05-10 23:35:20.240 WARNING (MainThread) [custom_components.grill_buddy.sensor] async_schedule_update_ha_state was none, didn't await
-		attributes:
-			state update settings
 
 		notify on status change yes/no
 		what is the state of a probe? current temperature? whether it's on temperature vs target?

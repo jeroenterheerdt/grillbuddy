@@ -69,6 +69,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.data[DOMAIN][COORDINATOR] = coordinator
     hass.data[DOMAIN][PROBES] = {}
 
+    barf = hass.data["sensor"]
     if entry.unique_id is None:
         hass.config_entries.async_update_entry(entry, unique_id=coordinator.id, data={})
 

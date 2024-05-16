@@ -606,7 +606,7 @@ class GrillBuddyStorage:
     @callback
     def async_get_preset(self, preset_id: int) -> PresetEntry:
         """Get an existing PresetEntry by id."""
-        if preset_id:
+        if preset_id is not None:
             res = self.presets.get(int(preset_id))
             return attr.asdict(res) if res else None
         else:
@@ -629,6 +629,15 @@ class GrillBuddyStorage:
         for key, val in self.stateupdatesettings.items():
             res.append(attr.asdict(val))
         return res
+
+    @callback
+    def async_get_state_update_setting(self, sus_id: int) -> StateUpdateSettingEntry:
+        """Get an existing StateUpdateSetting by id."""
+        if sus_id is not None:
+            res = self.stateupdatesettings.get(int(sus_id))
+            return attr.asdict(res) if res else None
+        else:
+            return None
 
     @callback
     def async_create_preset(self, data: dict) -> PresetEntry:
