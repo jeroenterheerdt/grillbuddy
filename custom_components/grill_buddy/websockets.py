@@ -4,7 +4,7 @@ import logging
 
 from config.custom_components.grill_buddy.helpers import get_localized_temperature
 from homeassistant.components import websocket_api
-from homeassistant.core import callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.components.http.data_validator import RequestDataValidator
 from homeassistant.helpers import config_validation as cv
 from homeassistant.components.http import HomeAssistantView
@@ -27,6 +27,7 @@ from .const import (
     PROBE_PRESET,
     PROBE_TEMPERATURE,
     PRESETS,
+    SENSOR_DOMAIN,
     STATE_UPDATE_SETTINGS,
 )
 
@@ -150,6 +151,16 @@ def websocket_get_state_update_settings(hass, connection, msg):
     connection.send_result(msg["id"], sus)
 
 
+@callback
+def websocket_get_sensors(hass: HomeAssistant, connection, msg):
+    """Publish list of sensors from Home Assistant."""
+    entities = []
+    ents = hass.data[SENSOR_DOMAIN].entities
+    for e in ents:
+        entities.append(e.entity_id)
+    connection.send_result(msg["id"], entities)
+
+
 async def async_register_websockets(hass):
     hass.http.register_view(GrillBuddyConfigView)
     hass.http.register_view(GrillBuddyProbeView)
@@ -186,5 +197,13 @@ async def async_register_websockets(hass):
         websocket_get_state_update_settings,
         websocket_api.BASE_COMMAND_MESSAGE_SCHEMA.extend(
             {vol.Required("type"): DOMAIN + "/" + STATE_UPDATE_SETTINGS}
+        ),
+    )
+    async_register_command(
+        hass,
+        DOMAIN + "/" + SENSOR_DOMAIN,
+        websocket_get_sensors,
+        websocket_api.BASE_COMMAND_MESSAGE_SCHEMA.extend(
+            {vol.Required("type"): DOMAIN + "/" + SENSOR_DOMAIN}
         ),
     )

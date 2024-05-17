@@ -6,6 +6,7 @@ NAME = "Grill Buddy"
 MANUFACTURER = "@jeroenterheerdt"
 
 DOMAIN = "grill_buddy"
+
 CUSTOM_COMPONENTS = "custom_components"
 
 LANGUAGE_FILES_DIR = "translations"
@@ -24,6 +25,7 @@ PANEL_ICON = "mdi:grill"
 CONF_IMPERIAL = "imperial"
 CONF_METRIC = "metric"
 CONF_UNITS = "units"
+SENSOR_DOMAIN = "sensor"
 
 # Constants
 PROBES = "probes"

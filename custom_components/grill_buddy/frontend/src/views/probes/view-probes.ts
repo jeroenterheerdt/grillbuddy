@@ -11,6 +11,7 @@ import {
   saveProbe,
   fetchPresets,
   fetchStateUpdateSettings,
+  fetchSensors,
 } from "../../data/websockets";
 import { SubscribeMixin } from "../../subscribe-mixin";
 
@@ -41,6 +42,9 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
 
   @property({ type: Array })
   private state_update_settings: StateUpdateSettings[] = [];
+
+  @property({ type: Array })
+  private sensors: string[] = [];
 
   @query("#nameInput")
   private nameInput!: HTMLInputElement;
@@ -75,6 +79,8 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
     this.probes = await fetchProbes(this.hass);
     this.presets = await fetchPresets(this.hass);
     this.state_update_settings = await fetchStateUpdateSettings(this.hass);
+    this.sensors = await fetchSensors(this.hass);
+    console.log(this.sensors);
   }
 
   private handleAddProbe(): void {

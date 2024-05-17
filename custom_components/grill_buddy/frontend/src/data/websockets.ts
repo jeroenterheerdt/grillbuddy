@@ -49,6 +49,11 @@ export const fetchStateUpdateSettings = (
     type: DOMAIN + "/stateupdatesettings",
   });
 
+export const fetchSensors = (hass: HomeAssistant): Promise<string[]> =>
+  hass.callWS({
+    type: DOMAIN + "/sensor",
+  });
+
 /*export const fetchModules = (
   hass: HomeAssistant
 ): Promise<SmartIrrigationModule[]> =>

@@ -17,3 +17,5 @@ export const PROBE_STATE_UPDATE_SETTING = "probe_state_update_setting";
 export const CONF_METRIC = "metric";
 export const UNIT_F = "°F";
 export const UNIT_C = "°C";
+
+export const SENSOR_DOMAIN = "sensor";
