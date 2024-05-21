@@ -4,6 +4,7 @@ import { property, customElement } from "lit/decorators.js";
 import { HomeAssistant } from "custom-card-helpers";
 import { loadHaForm } from "../../load-ha-elements";
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import {
   deleteProbe,
   fetchConfig,
@@ -13,6 +14,7 @@ import {
   fetchStateUpdateSettings,
   fetchSensors,
 } from "../../data/websockets";
+import { mdiDelete} from "@mdi/js";
 import { SubscribeMixin } from "../../subscribe-mixin";
 
 import { Config, Preset, Probe, StateUpdateSettings } from "../../types";
@@ -143,7 +145,7 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
               value="${value["preset_id"]}"
               ?selected="${selected === value["preset_id"]}"
             >
-              ${value["preset_name"]}
+              ${unsafeHTML(value["preset_icon"])} ${value["preset_name"]}
               (${localizeTemperature(
                 this.config,
                 value["preset_target_temperature"],
@@ -241,6 +243,7 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
           >
             ${this.renderTheOptions(this.presets, probe.probe_preset)}
           </select>
+
             </div>
             <div class="probeline">
             <label for="probe_lower_bound${index}">${localize(
@@ -329,7 +332,7 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
                 )}:</label
               >
               <select id="sourceInput">
-              ${this.renderTheSourceOptions(this.sensors)}
+                ${this.renderTheSourceOptions(this.sensors)}
               </select>
             </div>
 
@@ -362,7 +365,7 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
       }">---${localize(
         "common.labels.select",
         this.hass.language,
-        )}---</option>`;
+      )}---</option>`;
       Object.entries(thelist).map(
         ([key, value]) =>
           (r = html`${r}
@@ -376,7 +379,6 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
       return r;
     }
   }
-
 
   static get styles(): CSSResultGroup {
     return css`

@@ -47,6 +47,7 @@ PRESET_NAME = "preset_name"
 PRESET_PROTEIN = "preset_protein"
 PRESET_DONENESS = "preset_doneness"
 PRESET_TARGET_TEMPERATURE = "preset_target_temperature"
+PRESET_ICON = "preset_icon"
 
 # Defaults
 PROBE_UPPER_BOUND_DEFAULT = None

@@ -1,24 +1,22 @@
+from datetime import timedelta
 import logging
 
+from homeassistant.components.sensor import DOMAIN as PLATFORM, SensorEntity
 from homeassistant.components.sensor.const import SensorDeviceClass
-
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_UNKNOWN, STATE_UNAVAILABLE
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.components.sensor import SensorEntity
-from homeassistant.helpers.entity import generate_entity_id
-from homeassistant.helpers.restore_state import RestoreEntity
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.event import async_track_state_change
+from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
+from homeassistant.core import HomeAssistant, callback, Event, EventStateChangedData
 from homeassistant.helpers.dispatcher import (
     async_dispatcher_connect,
     async_dispatcher_send,
 )
+from homeassistant.helpers.entity import generate_entity_id
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.helpers.restore_state import RestoreEntity
+from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
 from homeassistant.util import slugify
-from homeassistant.components.sensor import DOMAIN as PLATFORM
 from homeassistant.util.unit_system import METRIC_SYSTEM
-
 
 from .const import (
     ABOVE_LOWER_BOUND,
@@ -26,33 +24,32 @@ from .const import (
     ABOVE_UPPER_BOUND,
     AT_TARGET_TEMPERATURE,
     BELOW_LOWER_BOUND,
+    BELOW_TARGET_TEMPERATURE,
     BELOW_UPPER_BOUND,
+    COORDINATOR,
     DOMAIN,
+    MANUFACTURER,
+    NAME,
     OUTSIDE_BOUNDS,
     PRESET_NAME,
     PRESET_TARGET_TEMPERATURE,
     PROBE_ID,
     PROBE_LOWER_BOUND,
     PROBE_NAME,
-    PROBE_SOURCE,
     PROBE_PRESET,
+    PROBE_SOURCE,
     PROBE_STATE_UPDATE_SETTING,
     PROBE_TEMPERATURE,
     PROBE_UPPER_BOUND,
     PROBES,
-    NAME,
+    SENSOR_ICON,
     STATE_UPDATE_SETTING_ID,
     STATE_UPDATE_SETTING_NAME,
     UNIT_DEGREES_C,
     UNIT_DEGREES_F,
     VERSION,
-    MANUFACTURER,
-    SENSOR_ICON,
-    COORDINATOR,
-    BELOW_TARGET_TEMPERATURE,
     WITHIN_BOUNDS,
 )
-from .localize import localize
 from .helpers import (
     convert_temperatures,
     get_localized_temperature,
@@ -60,6 +57,7 @@ from .helpers import (
     is_number,
     parse_sensor_state,
 )
+from .localize import localize
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -145,6 +143,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         self._state_update_setting = self._hass.data[DOMAIN][
             COORDINATOR
         ].store.async_get_state_update_setting(state_update_setting)
+        self._time_to_target = None
         self._notification_sent = False
         self.async_watch_sensor_states()
         async_dispatcher_connect(
@@ -155,20 +154,23 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         if self._state_listener:
             self._state_listener()
         if self._source:
-            self._state_listener = async_track_state_change(
+            self._state_listener = async_track_state_change_event(
                 self._hass, self._source, self.async_sensor_state_changed
             )
         else:
             self._state_listener = None
 
     @callback
-    def async_sensor_state_changed(self, entity, old_state, new_state):
+    def async_sensor_state_changed(
+        self, event: Event[EventStateChangedData]
+    ) -> None:  # old signature: entity, old_state, new_state):
         """Callback fired when a sensor state has changed."""
 
-        old_state_obj = old_state
-        new_state_obj = new_state
-        old_state = parse_sensor_state(old_state)
-        new_state = parse_sensor_state(new_state)
+        old_state_obj = event.data["old_state"]
+        new_state_obj = event.data["new_state"]
+        entity = event.data["entity_id"]
+        old_state = parse_sensor_state(old_state_obj)
+        new_state = parse_sensor_state(new_state_obj)
         if new_state in (STATE_UNKNOWN, STATE_UNAVAILABLE):
             # sensor is unknown at startup, state which comes after is considered as initial state
             _LOGGER.debug("Initial state for {} is {}".format(entity, new_state))
@@ -224,10 +226,15 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
                         self._status = BELOW_UPPER_BOUND
 
             # add prediction
-            if not is_number(old_state) or not is_number(new_state):
+
+            if not is_number(old_state) or not is_number(self._temperature):
                 delta = 0
             else:
-                delta = float(old_state) - float(new_state)
+                if not self._system_is_metric:
+                    old_state = convert_temperatures(
+                        UNIT_DEGREES_F, UNIT_DEGREES_C, old_state
+                    )
+                delta = float(self._temperature) - float(old_state)
             if delta != 0:
                 # time diff in seconds between old_state_obj and new_state_obj
                 # calculate increase / decrease per second
@@ -239,17 +246,24 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
                 ).total_seconds()
                 if time_diff_seconds != 0:
                     delta_per_second = delta / time_diff_seconds
-                    if self._status == ABOVE_TARGET_TEMPERATURE:
-                        time_to_target = (
-                            self._preset[PRESET_TARGET_TEMPERATURE] - self._temperature
-                        ) / delta_per_second
-                    elif self._status == BELOW_TARGET_TEMPERATURE:
-                        time_to_target = (
+
+                    if self._temperature > self._preset[PRESET_TARGET_TEMPERATURE]:
+                        self._time_to_target = (
                             self._temperature - self._preset[PRESET_TARGET_TEMPERATURE]
                         ) / delta_per_second
+                    elif self._temperature < self._preset[PRESET_TARGET_TEMPERATURE]:
+                        self._time_to_target = (
+                            self._preset[PRESET_TARGET_TEMPERATURE] - self._temperature
+                        ) / delta_per_second
                     else:
-                        # do the others here (within bounds / above upper bound / below lower bound)
-                        time_to_target = 0
+                        self._time_to_target = 0
+                    if self._time_to_target < 0:
+                        self._time_to_target = None
+                    else:
+                        # format to hh:mm:ss
+                        td = str(timedelta(seconds=self._time_to_target))
+                        x = td.split(":")
+                        self._time_to_target = f"{x[0]}:{x[1]}:{x[2].split(".")[0]}"
 
             self.async_schedule_update_ha_state()
 
@@ -369,6 +383,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             "lower bound": f"{get_localized_temperature(self._lower_bound,self._system_is_metric)} {localized_temperature_unit}",
             "upper bound": f"{get_localized_temperature(self._upper_bound,self._system_is_metric)} {localized_temperature_unit}",
             "state update setting": f"{sus_attribute}",
+            "time to target": self._time_to_target,
         }
 
     async def async_added_to_hass(self):

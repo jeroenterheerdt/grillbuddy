@@ -189,7 +189,7 @@ class GrillBuddyCoordinator(DataUpdateCoordinator):
             self.store.async_get_config()
 
     async def async_remove_entity(self, probe_id: str):
-        entity_registry = self.hass.helpers.entity_registry.async_get(self.hass)
+        entity_registry = self.hass.helpers.entity_registry.async_get()
         probe_id = int(probe_id)
         entity = self.hass.data[DOMAIN][PROBES][probe_id]
         entity_registry.async_remove(entity.entity_id)

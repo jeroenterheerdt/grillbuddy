@@ -1,5 +1,4 @@
 import { css } from 'lit';
-
 export const commonStyle = css`
   ha-card {
     display: flex;

@@ -43,6 +43,7 @@ export class Preset {
   protein: PresetProtein;
   doneness: PresetDoneness;
   target_temp: number;
+  icon: string;
 
   constructor(
     i: number,
@@ -50,12 +51,14 @@ export class Preset {
     p: PresetProtein,
     d: PresetDoneness,
     t: number,
+    ic: string,
   ) {
     this.id = i;
     this.name = n;
     this.protein = p;
     this.doneness = d;
     this.target_temp = t;
+    this.icon = ic;
   }
 }
 
@@ -86,36 +89,3 @@ export class Probe {
     this.probe_state_update_setting = sus;
   }
 }
-
-/*export class SmartIrrigationModule {
-  id: number;
-  name: string;
-  description: string;
-  //duration: number;
-  config: object;
-  schema: object;
-  constructor(i: number, n: string, d: string, c: object, s: object) {
-    this.id = i;
-    this.name = n;
-    this.description = d;
-    this.config = c;
-    this.schema = s;
-    //this.duration = dr;
-    //this.module = m;
-  }
-}*/
-
-/*export class SmartIrrigationMapping {
-  id: number;
-  name: string;
-  mappings: object;
-  data_last_updated?: Date;
-
-  constructor(i: number, n: string, m: object) {
-    this.id = i;
-    this.name = n;
-    this.mappings = m;
-    this.data_last_updated = undefined;
-  }
-}
-*/

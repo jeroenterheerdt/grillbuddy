@@ -10,7 +10,6 @@
 	3. Notifications
 		don't send notifications, just provide examples in docs on how to use automation.
 	4. blocking calls fix
-	5. Predict when at target temperature, within bounds, below lower bound, above upper bound
 2. Need to be able to set target temp for probes
 		a. Protein selection
 		b. Doneness

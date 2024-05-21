@@ -14,6 +14,7 @@ from .const import (
     DOMAIN,
     PRESET_DONENESS,
     PRESET_DONENESS_ENUM,
+    PRESET_ICON,
     PRESET_ID,
     PRESET_NAME,
     PRESET_PROTEIN,
@@ -71,6 +72,7 @@ class PresetEntry:
     preset_protein = attr.ib(type=str, default=None)
     preset_doneness = attr.ib(type=str, default=None)
     preset_target_temperature = attr.ib(type=float, default=None)
+    preset_icon = attr.ib(type=str, default=None)
 
 
 @attr.s(slots=True, frozen=True)
@@ -152,6 +154,7 @@ class GrillBuddyStorage:
                         preset_protein=preset[PRESET_PROTEIN],
                         preset_doneness=preset[PRESET_DONENESS],
                         preset_target_temperature=preset[PRESET_TARGET_TEMPERATURE],
+                        preset_icon=preset[PRESET_ICON],
                     )
             if STATE_UPDATE_SETTINGS in data:
                 for sus in data[STATE_UPDATE_SETTINGS]:
@@ -167,8 +170,7 @@ class GrillBuddyStorage:
         self.presets = presets
         self.stateupdatesettings = stateupdatesettings
 
-        # not needed? should trigger from init?
-        # await self.set_up_factory_defaults()
+        await self.set_up_factory_defaults()
 
     async def set_up_factory_defaults(self):
         if not self.probes:
@@ -181,6 +183,44 @@ class GrillBuddyStorage:
 
     async def async_factory_default_probes(self):
         return
+
+    async def async_factory_default_stateupdatesettings(self):
+        self.stateupdatesettings[0] = StateUpdateSettingEntry(
+            **{
+                STATE_UPDATE_SETTING_ID: 0,
+                STATE_UPDATE_SETTING_NAME: await localize(
+                    "state_update_settings.at_target_temperature",
+                    self.hass.config.language,
+                ),
+            }
+        )
+        self.stateupdatesettings[1] = StateUpdateSettingEntry(
+            **{
+                STATE_UPDATE_SETTING_ID: 1,
+                STATE_UPDATE_SETTING_NAME: await localize(
+                    "state_update_settings.within_bounds",
+                    self.hass.config.language,
+                ),
+            }
+        )
+        self.stateupdatesettings[2] = StateUpdateSettingEntry(
+            **{
+                STATE_UPDATE_SETTING_ID: 2,
+                STATE_UPDATE_SETTING_NAME: await localize(
+                    "state_update_settings.below_lower_bound",
+                    self.hass.config.language,
+                ),
+            }
+        )
+        self.stateupdatesettings[3] = StateUpdateSettingEntry(
+            **{
+                STATE_UPDATE_SETTING_ID: 3,
+                STATE_UPDATE_SETTING_NAME: await localize(
+                    "state_update_settings.above_upper_bound",
+                    self.hass.config.language,
+                ),
+            }
+        )
 
     """ Default presets:
     Beef
@@ -212,299 +252,292 @@ class GrillBuddyStorage:
     well done 165F
     """
 
-    async def async_factory_default_stateupdatesettings(self):
-        self.stateupdatesettings[0] = StateUpdateSettingEntry(
-            **{
-                STATE_UPDATE_SETTING_ID: 0,
-                STATE_UPDATE_SETTING_NAME: localize(
-                    "state_update_settings.at_target_temperature",
-                    self.hass.config.language,
-                ),
-            }
-        )
-        self.stateupdatesettings[1] = StateUpdateSettingEntry(
-            **{
-                STATE_UPDATE_SETTING_ID: 1,
-                STATE_UPDATE_SETTING_NAME: localize(
-                    "state_update_settings.within_bounds",
-                    self.hass.config.language,
-                ),
-            }
-        )
-        self.stateupdatesettings[2] = StateUpdateSettingEntry(
-            **{
-                STATE_UPDATE_SETTING_ID: 2,
-                STATE_UPDATE_SETTING_NAME: localize(
-                    "state_update_settings.below_lower_bound",
-                    self.hass.config.language,
-                ),
-            }
-        )
-        self.stateupdatesettings[3] = StateUpdateSettingEntry(
-            **{
-                STATE_UPDATE_SETTING_ID: 3,
-                STATE_UPDATE_SETTING_NAME: localize(
-                    "state_update_settings.above_upper_bound",
-                    self.hass.config.language,
-                ),
-            }
-        )
-
     async def async_factory_default_presets(self):
+        beef_icon = "&#128046;"
+        pork_icon = "&#128055;"
+        fish_icon = "&#128031;"
+        poultry_icon = "&#128020;"
+        lamb_icon = "&#128017;"
+        turkey_icon = "&#129411;"
+        veal_icon = "&#128004;"
+
         # Beef
         self.presets[0] = PresetEntry(
             **{
                 PRESET_ID: 0,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.beef_rare", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.BEEF,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.RARE,
                 PRESET_TARGET_TEMPERATURE: 52,
+                PRESET_ICON: beef_icon,
             }
         )
         self.presets[1] = PresetEntry(
             **{
                 PRESET_ID: 1,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.beef_medium_rare",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.BEEF,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMRARE,
                 PRESET_TARGET_TEMPERATURE: 60,
+                PRESET_ICON: beef_icon,
             }
         )
         self.presets[2] = PresetEntry(
             **{
                 PRESET_ID: 2,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.beef_medium", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.BEEF,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUM,
                 PRESET_TARGET_TEMPERATURE: 66,
+                PRESET_ICON: beef_icon,
             }
         )
         self.presets[3] = PresetEntry(
             **{
                 PRESET_ID: 3,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.beef_medium_well",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.BEEF,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMWELL,
                 PRESET_TARGET_TEMPERATURE: 71,
+                PRESET_ICON: beef_icon,
             }
         )
         self.presets[4] = PresetEntry(
             **{
                 PRESET_ID: 4,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.beef_well_done", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.BEEF,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.WELLDONE,
                 PRESET_TARGET_TEMPERATURE: 77,
+                PRESET_ICON: beef_icon,
             }
         )
         self.presets[5] = PresetEntry(
             **{
                 PRESET_ID: 5,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.fish", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.FISH,
                 PRESET_TARGET_TEMPERATURE: 63,
+                PRESET_ICON: fish_icon,
             }
         )
         self.presets[6] = PresetEntry(
             **{
                 PRESET_ID: 6,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.ground_beef", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.GROUNDBEEF,
                 PRESET_TARGET_TEMPERATURE: 71,
+                PRESET_ICON: beef_icon,
             }
         )
         self.presets[7] = PresetEntry(
             **{
                 PRESET_ID: 7,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.ground_poultry", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.GROUNDPOULTRY,
                 PRESET_TARGET_TEMPERATURE: 74,
+                PRESET_ICON: poultry_icon,
             }
         )
         self.presets[8] = PresetEntry(
             **{
                 PRESET_ID: 8,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.lamb_rare", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.RARE,
                 PRESET_TARGET_TEMPERATURE: 60,
+                PRESET_ICON: lamb_icon,
             }
         )
         self.presets[9] = PresetEntry(
             **{
                 PRESET_ID: 9,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.lamb_medium_rare",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMRARE,
                 PRESET_TARGET_TEMPERATURE: 63,
+                PRESET_ICON: lamb_icon,
             }
         )
         self.presets[10] = PresetEntry(
             **{
                 PRESET_ID: 10,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.lamb_medium", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUM,
                 PRESET_TARGET_TEMPERATURE: 71,
+                PRESET_ICON: lamb_icon,
             }
         )
         self.presets[11] = PresetEntry(
             **{
                 PRESET_ID: 11,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.lamb_medium_well",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMWELL,
                 PRESET_TARGET_TEMPERATURE: 74,
+                PRESET_ICON: lamb_icon,
             }
         )
         self.presets[12] = PresetEntry(
             **{
                 PRESET_ID: 12,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.lamb_well_done", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.LAMB,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.WELLDONE,
                 PRESET_TARGET_TEMPERATURE: 77,
+                PRESET_ICON: lamb_icon,
             }
         )
         self.presets[13] = PresetEntry(
             **{
                 PRESET_ID: 13,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.pork_medium", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.PORK,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUM,
                 PRESET_TARGET_TEMPERATURE: 71,
+                PRESET_ICON: pork_icon,
             }
         )
         self.presets[14] = PresetEntry(
             **{
                 PRESET_ID: 14,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.pork_medium_well",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.PORK,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMWELL,
                 PRESET_TARGET_TEMPERATURE: 74,
+                PRESET_ICON: pork_icon,
             }
         )
         self.presets[15] = PresetEntry(
             **{
                 PRESET_ID: 15,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.pork_well_done", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.PORK,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.WELLDONE,
                 PRESET_TARGET_TEMPERATURE: 77,
+                PRESET_ICON: pork_icon,
             }
         )
         self.presets[16] = PresetEntry(
             **{
                 PRESET_ID: 16,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.poultry", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.POULTRY,
                 PRESET_TARGET_TEMPERATURE: 74,
+                PRESET_ICON: poultry_icon,
             }
         )
         self.presets[17] = PresetEntry(
             **{
                 PRESET_ID: 17,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.turkey", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.TURKEY,
                 PRESET_TARGET_TEMPERATURE: 74,
+                PRESET_ICON: turkey_icon,
             }
         )
         self.presets[18] = PresetEntry(
             **{
                 PRESET_ID: 18,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.veal_rare", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.RARE,
                 PRESET_TARGET_TEMPERATURE: 52,
+                PRESET_ICON: veal_icon,
             }
         )
         self.presets[19] = PresetEntry(
             **{
                 PRESET_ID: 19,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.veal_medium_rare",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMRARE,
                 PRESET_TARGET_TEMPERATURE: 60,
+                PRESET_ICON: veal_icon,
             }
         )
         self.presets[20] = PresetEntry(
             **{
                 PRESET_ID: 20,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.veal_medium", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUM,
                 PRESET_TARGET_TEMPERATURE: 66,
+                PRESET_ICON: veal_icon,
             }
         )
         self.presets[21] = PresetEntry(
             **{
                 PRESET_ID: 21,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.veal_medium_well",
                     self.hass.config.language,
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.MEDIUMWELL,
                 PRESET_TARGET_TEMPERATURE: 71,
+                PRESET_ICON: veal_icon,
             }
         )
         self.presets[22] = PresetEntry(
             **{
                 PRESET_ID: 22,
-                PRESET_NAME: localize(
+                PRESET_NAME: await localize(
                     "defaults.presets.veal_well_done", self.hass.config.language
                 ),
                 PRESET_PROTEIN: PRESET_PROTEIN_ENUM.VEAL,
                 PRESET_DONENESS: PRESET_DONENESS_ENUM.WELLDONE,
                 PRESET_TARGET_TEMPERATURE: 74,
+                PRESET_ICON: veal_icon,
             }
         )
 
