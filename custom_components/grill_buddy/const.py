@@ -1,4 +1,5 @@
 """Store constants."""
+
 from enum import Enum
 
 VERSION = "v2024.4.0"
@@ -26,6 +27,7 @@ CONF_IMPERIAL = "imperial"
 CONF_METRIC = "metric"
 CONF_UNITS = "units"
 SENSOR_DOMAIN = "sensor"
+INPUT_NUMBER_DOMAIN = "input_number"
 
 # Constants
 PROBES = "probes"
@@ -47,13 +49,20 @@ PRESET_DONENESS = "preset_doneness"
 PRESET_TARGET_TEMPERATURE = "preset_target_temperature"
 
 # Defaults
-PROBE_UPPER_BOUND_DEFAULT = 0.0
-PROBE_LOWER_BOUND_DEFAULT = 0.0
+PROBE_UPPER_BOUND_DEFAULT = None
+PROBE_LOWER_BOUND_DEFAULT = None
 PROBE_STATE_UPDATE_SETTING_DEFAULT = 0
 
 # Probe States
-REACHED_TARGET_TEMPERATURE = "reached_target_temperature"
+AT_TARGET_TEMPERATURE = "at_target_temperature"
 BELOW_TARGET_TEMPERATURE = "below_target_temperature"
+ABOVE_TARGET_TEMPERATURE = "above_target_temperature"
+WITHIN_BOUNDS = "within_bounds"
+OUTSIDE_BOUNDS = "outside_bounds"
+BELOW_LOWER_BOUND = "below_lower_bound"
+ABOVE_LOWER_BOUND = "above_lower_bound"
+ABOVE_UPPER_BOUND = "above_upper_bound"
+BELOW_UPPER_BOUND = "below_upper_bound"
 
 # State update settings
 STATE_UPDATE_SETTINGS = "stateupdatesettings"

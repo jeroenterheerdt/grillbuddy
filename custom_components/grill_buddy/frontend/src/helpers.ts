@@ -202,7 +202,7 @@ export function localizeTemperature(config, val?: number) {
     return;
   }
   if (config.units != CONF_METRIC) {
-    return Math.round(val * 1.8 + 32.0);
+    return Math.round((val * 1.8 + 32.0) * 10) / 10;
   } else {
     return val;
   }

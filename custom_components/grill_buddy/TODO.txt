@@ -1,26 +1,6 @@
-	0.general:
-		notification service
-		notification cooldown (s)
 	1. probes:
 		source (sensor)
-			validate check that the source exists (?)
-			can this be a list of sensors instead of a textbox?
-			something like: barf = hass.data["sensor"]
-			IF THIS WORKS ALSO ADD TO SMART IRRIGATION!
-		preset or just temp
-			svg in preset dropdown
-		update status when:
-			temp reached
-			fallen below
-			raised above
-			inside of range
-			outside of range
-
-			IMPLEMENT THE BEHAVIOR FOR THESE ON UPDATE
-
-		notify on status change yes/no
-		what is the state of a probe? current temperature? whether it's on temperature vs target?
-			right now went with current temperature
+			ALSO ADD TO SMART IRRIGATION!
 	2. presets:
 		ability to define custom preset:
 			name
@@ -28,10 +8,9 @@
 	2b labels in options flow
 	2c NL translations
 	3. Notifications
-		how to send?
-		allow user to enable / disable notifications
-		allow user to configure service to call for notifications.
-			can I list the notify services?
+		don't send notifications, just provide examples in docs on how to use automation.
+	4. blocking calls fix
+	5. Predict when at target temperature, within bounds, below lower bound, above upper bound
 2. Need to be able to set target temp for probes
 		a. Protein selection
 		b. Doneness

@@ -1,4 +1,5 @@
 """The Smart Irrigation Integration."""
+
 import logging
 from config.custom_components.grill_buddy.helpers import (
     get_localized_temperature,

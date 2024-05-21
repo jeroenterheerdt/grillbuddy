@@ -155,11 +155,11 @@ class GrillBuddyStorage:
                     )
             if STATE_UPDATE_SETTINGS in data:
                 for sus in data[STATE_UPDATE_SETTINGS]:
-                    stateupdatesettings[
-                        sus[STATE_UPDATE_SETTING_ID]
-                    ] = StateUpdateSettingEntry(
-                        stateupdatesetting_id=sus[STATE_UPDATE_SETTING_ID],
-                        stateupdatesetting_name=sus[STATE_UPDATE_SETTING_NAME],
+                    stateupdatesettings[sus[STATE_UPDATE_SETTING_ID]] = (
+                        StateUpdateSettingEntry(
+                            stateupdatesetting_id=sus[STATE_UPDATE_SETTING_ID],
+                            stateupdatesetting_name=sus[STATE_UPDATE_SETTING_NAME],
+                        )
                     )
 
         self.config = config
@@ -217,7 +217,7 @@ class GrillBuddyStorage:
             **{
                 STATE_UPDATE_SETTING_ID: 0,
                 STATE_UPDATE_SETTING_NAME: localize(
-                    "state_update_settings.target_temperature_reached",
+                    "state_update_settings.at_target_temperature",
                     self.hass.config.language,
                 ),
             }
@@ -235,7 +235,7 @@ class GrillBuddyStorage:
             **{
                 STATE_UPDATE_SETTING_ID: 2,
                 STATE_UPDATE_SETTING_NAME: localize(
-                    "state_update_settings.outside_bounds",
+                    "state_update_settings.below_lower_bound",
                     self.hass.config.language,
                 ),
             }
@@ -243,15 +243,6 @@ class GrillBuddyStorage:
         self.stateupdatesettings[3] = StateUpdateSettingEntry(
             **{
                 STATE_UPDATE_SETTING_ID: 3,
-                STATE_UPDATE_SETTING_NAME: localize(
-                    "state_update_settings.below_lower_bound",
-                    self.hass.config.language,
-                ),
-            }
-        )
-        self.stateupdatesettings[4] = StateUpdateSettingEntry(
-            **{
-                STATE_UPDATE_SETTING_ID: 4,
                 STATE_UPDATE_SETTING_NAME: localize(
                     "state_update_settings.above_upper_bound",
                     self.hass.config.language,

@@ -21,7 +21,14 @@ from homeassistant.util.unit_system import METRIC_SYSTEM
 
 
 from .const import (
+    ABOVE_LOWER_BOUND,
+    ABOVE_TARGET_TEMPERATURE,
+    ABOVE_UPPER_BOUND,
+    AT_TARGET_TEMPERATURE,
+    BELOW_LOWER_BOUND,
+    BELOW_UPPER_BOUND,
     DOMAIN,
+    OUTSIDE_BOUNDS,
     PRESET_NAME,
     PRESET_TARGET_TEMPERATURE,
     PROBE_ID,
@@ -34,6 +41,7 @@ from .const import (
     PROBE_UPPER_BOUND,
     PROBES,
     NAME,
+    STATE_UPDATE_SETTING_ID,
     STATE_UPDATE_SETTING_NAME,
     UNIT_DEGREES_C,
     UNIT_DEGREES_F,
@@ -41,8 +49,8 @@ from .const import (
     MANUFACTURER,
     SENSOR_ICON,
     COORDINATOR,
-    REACHED_TARGET_TEMPERATURE,
     BELOW_TARGET_TEMPERATURE,
+    WITHIN_BOUNDS,
 )
 from .localize import localize
 from .helpers import (
@@ -129,6 +137,11 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         self._status = None
         self._lower_bound = lower_bound
         self._upper_bound = upper_bound
+        if self._preset is not None:
+            if self._lower_bound is None:
+                self._lower_bound = self._preset[PRESET_TARGET_TEMPERATURE]
+            if self._upper_bound is None:
+                self._upper_bound = self._preset[PRESET_TARGET_TEMPERATURE]
         self._state_update_setting = self._hass.data[DOMAIN][
             COORDINATOR
         ].store.async_get_state_update_setting(state_update_setting)
@@ -152,6 +165,8 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
     def async_sensor_state_changed(self, entity, old_state, new_state):
         """Callback fired when a sensor state has changed."""
 
+        old_state_obj = old_state
+        new_state_obj = new_state
         old_state = parse_sensor_state(old_state)
         new_state = parse_sensor_state(new_state)
         if new_state in (STATE_UNKNOWN, STATE_UNAVAILABLE):
@@ -168,32 +183,85 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
                 self._temperature = convert_temperatures(
                     UNIT_DEGREES_F, UNIT_DEGREES_C, self._temperature
                 )
-            # check if temperature is above target temperature (in the future we should check against the condition set)
-            # if enabled, send notification
             if (
                 is_number(self._temperature)
                 and self._preset
                 and is_number(self._preset[PRESET_TARGET_TEMPERATURE])
             ):
-                # if _temperature >= target_temp, set status accordingly
-                if float(self._temperature) >= float(
-                    self._preset[PRESET_TARGET_TEMPERATURE]
-                ):
-                    # set the status attribute
-                    self._status = REACHED_TARGET_TEMPERATURE
-                    if not self._notification_sent:
-                        # notify but only if this is the first time or if the notification has been dismissed?
-                        notify_data = {
-                            "message": "msg from code",
-                            "title": "title from code",
-                        }
-                        # await self._hass.services.async_call(
-                        #    "notify", "pushbullet", notify_data
-                        # )
-                        self._notification_sent = True
-                else:
-                    self._status = BELOW_TARGET_TEMPERATURE
+                # handle state update settings here
+                if (
+                    self._state_update_setting[STATE_UPDATE_SETTING_ID] == 0
+                ):  # at target temperature
+                    if self._temperature < self._preset[PRESET_TARGET_TEMPERATURE]:
+                        self._status = BELOW_TARGET_TEMPERATURE
+                    elif self._temperature > self._preset[PRESET_TARGET_TEMPERATURE]:
+                        self._status = ABOVE_TARGET_TEMPERATURE
+                    else:
+                        self._status = AT_TARGET_TEMPERATURE
+                elif (
+                    self._state_update_setting[STATE_UPDATE_SETTING_ID] == 1
+                ):  # within bounds
+                    if (
+                        self._temperature >= self.get_lower_bound()
+                        and self._temperature <= self.get_upper_bound()
+                    ):
+                        self._status = WITHIN_BOUNDS
+                    else:
+                        self._status = OUTSIDE_BOUNDS
+                elif (
+                    self._state_update_setting[STATE_UPDATE_SETTING_ID] == 2
+                ):  # below_lower_bound
+                    if self._temperature < self.get_lower_bound():
+                        self._status = BELOW_LOWER_BOUND
+                    else:
+                        self._status = ABOVE_LOWER_BOUND
+                elif (
+                    self._state_update_setting[STATE_UPDATE_SETTING_ID] == 3
+                ):  # above_upper_bound
+                    if self._temperature > self.get_upper_bound():
+                        self._status = ABOVE_UPPER_BOUND
+                    else:
+                        self._status = BELOW_UPPER_BOUND
+
+            # add prediction
+            if not is_number(old_state) or not is_number(new_state):
+                delta = 0
+            else:
+                delta = float(old_state) - float(new_state)
+            if delta != 0:
+                # time diff in seconds between old_state_obj and new_state_obj
+                # calculate increase / decrease per second
+                # take diff between current temp and target (depends on state setting)
+                # estimate how long it's going to take by using increase/decrease per second
+
+                time_diff_seconds = (
+                    new_state_obj.last_changed - old_state_obj.last_changed
+                ).total_seconds()
+                if time_diff_seconds != 0:
+                    delta_per_second = delta / time_diff_seconds
+                    if self._status == ABOVE_TARGET_TEMPERATURE:
+                        time_to_target = (
+                            self._preset[PRESET_TARGET_TEMPERATURE] - self._temperature
+                        ) / delta_per_second
+                    elif self._status == BELOW_TARGET_TEMPERATURE:
+                        time_to_target = (
+                            self._temperature - self._preset[PRESET_TARGET_TEMPERATURE]
+                        ) / delta_per_second
+                    else:
+                        # do the others here (within bounds / above upper bound / below lower bound)
+                        time_to_target = 0
+
             self.async_schedule_update_ha_state()
+
+    def get_lower_bound(self):
+        if self._lower_bound:
+            return self._lower_bound
+        return self._preset[PRESET_TARGET_TEMPERATURE]
+
+    def get_upper_bound(self):
+        if self._upper_bound:
+            return self._upper_bound
+        return self._preset[PRESET_TARGET_TEMPERATURE]
 
     @callback
     def async_update_sensor_entity(self, id=None):
@@ -211,6 +279,12 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             self._preset = self._preset = self._hass.data[DOMAIN][
                 COORDINATOR
             ].store.async_get_preset(probe[PROBE_PRESET])
+            if self._preset is not None:
+                if self._lower_bound is None:
+                    self._lower_bound = self._preset[PRESET_TARGET_TEMPERATURE]
+                if self._upper_bound is None:
+                    self._upper_bound = self._preset[PRESET_TARGET_TEMPERATURE]
+
             self.async_watch_sensor_states()
             self.async_schedule_update_ha_state()
 

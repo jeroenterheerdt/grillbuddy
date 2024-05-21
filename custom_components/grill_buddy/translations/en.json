@@ -46,7 +46,7 @@
     }
   },
   "state_update_settings": {
-    "target_temperature_reached": "Target temperature reached",
+    "at_target_temperature": "At target temperature",
     "within_bounds": "Temperature within bounds",
     "outside_bounds": "Temperature outside bounds",
     "above_upper_bound": "Temperature above upper bound",

@@ -75,12 +75,10 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
       return;
     }
     this.config = await fetchConfig(this.hass);
-    console.log(this.config);
     this.probes = await fetchProbes(this.hass);
     this.presets = await fetchPresets(this.hass);
     this.state_update_settings = await fetchStateUpdateSettings(this.hass);
     this.sensors = await fetchSensors(this.hass);
-    console.log(this.sensors);
   }
 
   private handleAddProbe(): void {
@@ -217,14 +215,16 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
               <label for="probe_source${index}"
                 >${localize("panels.probes.labels.source", this.hass.language)}:</label
               >
-              <input id="probe_source${index}" type="text"
+              <select id="probe_source${index}"
               .value="${probe.probe_source}"
-              @input="${(e: Event) =>
+              @change="${(e: Event) =>
                 this.handleEditProbe(index, {
                   ...probe,
                   [PROBE_SOURCE]: (e.target as HTMLInputElement).value,
                 })}"
-              />
+              >
+              ${this.renderTheSourceOptions(this.sensors, probe.probe_source)}
+              </select>
             </div>
             <div class="probeline">
             <label for="probe_preset${index}">${localize(
@@ -328,7 +328,9 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
                   this.hass.language,
                 )}:</label
               >
-              <input id="sourceInput" type="text" />
+              <select id="sourceInput">
+              ${this.renderTheSourceOptions(this.sensors)}
+              </select>
             </div>
 
             <div class="probeline">
@@ -347,6 +349,34 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
       `;
     }
   }
+
+  private renderTheSourceOptions(
+    thelist: object,
+    selected?: string,
+  ): TemplateResult {
+    if (!this.hass) {
+      return html``;
+    } else {
+      let r = html`<option value="" ?selected=${
+        selected === undefined
+      }">---${localize(
+        "common.labels.select",
+        this.hass.language,
+        )}---</option>`;
+      Object.entries(thelist).map(
+        ([key, value]) =>
+          (r = html`${r}
+            <option
+              value="${value["name"]}"
+              ?selected="${selected === value["name"]}"
+            >
+              ${value["name"]}
+            </option>`),
+      );
+      return r;
+    }
+  }
+
 
   static get styles(): CSSResultGroup {
     return css`

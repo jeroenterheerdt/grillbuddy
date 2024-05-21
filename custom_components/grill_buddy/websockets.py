@@ -1,15 +1,15 @@
 import datetime
-import voluptuous as vol
 import logging
+
+import voluptuous as vol
 
 from config.custom_components.grill_buddy.helpers import get_localized_temperature
 from homeassistant.components import websocket_api
-from homeassistant.core import HomeAssistant, callback
-from homeassistant.components.http.data_validator import RequestDataValidator
-from homeassistant.helpers import config_validation as cv
 from homeassistant.components.http import HomeAssistantView
-from homeassistant.components.websocket_api import decorators, async_register_command
-
+from homeassistant.components.http.data_validator import RequestDataValidator
+from homeassistant.components.websocket_api import async_register_command, decorators
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import config_validation as cv, entity as Entity
 from homeassistant.helpers.dispatcher import (
     async_dispatcher_connect,
     async_dispatcher_send,
@@ -17,16 +17,17 @@ from homeassistant.helpers.dispatcher import (
 
 from .const import (
     DOMAIN,
-    PROBE_LOWER_BOUND,
-    PROBE_SOURCE,
-    PROBE_STATE_UPDATE_SETTING,
-    PROBE_UPPER_BOUND,
-    PROBES,
+    INPUT_NUMBER_DOMAIN,
+    PRESETS,
     PROBE_ID,
+    PROBE_LOWER_BOUND,
     PROBE_NAME,
     PROBE_PRESET,
+    PROBE_SOURCE,
+    PROBE_STATE_UPDATE_SETTING,
     PROBE_TEMPERATURE,
-    PRESETS,
+    PROBE_UPPER_BOUND,
+    PROBES,
     SENSOR_DOMAIN,
     STATE_UPDATE_SETTINGS,
 )
@@ -152,12 +153,14 @@ def websocket_get_state_update_settings(hass, connection, msg):
 
 
 @callback
-def websocket_get_sensors(hass: HomeAssistant, connection, msg):
+def websocket_get_sensors_and_input_numbers(hass: HomeAssistant, connection, msg):
     """Publish list of sensors from Home Assistant."""
     entities = []
-    ents = hass.data[SENSOR_DOMAIN].entities
-    for e in ents:
-        entities.append(e.entity_id)
+    for e in hass.data["entity_registry"].entities:
+        e = str(e)
+        if e.startswith((SENSOR_DOMAIN, INPUT_NUMBER_DOMAIN)):
+            entities.append({"name": e})
+    entities = sorted(entities, key=lambda d: d["name"])
     connection.send_result(msg["id"], entities)
 
 
@@ -202,7 +205,7 @@ async def async_register_websockets(hass):
     async_register_command(
         hass,
         DOMAIN + "/" + SENSOR_DOMAIN,
-        websocket_get_sensors,
+        websocket_get_sensors_and_input_numbers,
         websocket_api.BASE_COMMAND_MESSAGE_SCHEMA.extend(
             {vol.Required("type"): DOMAIN + "/" + SENSOR_DOMAIN}
         ),

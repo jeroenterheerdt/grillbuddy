@@ -12,6 +12,8 @@ from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 def convert_temperatures(from_unit, to_unit, val):
     if to_unit == from_unit:
         return val
+    if val is None:
+        return None
     if to_unit == UNIT_DEGREES_C:
         if from_unit == UNIT_DEGREES_F:
             return float((float(val) - 32.0) / 1.8)
@@ -35,16 +37,15 @@ def switch_probe_temperatures_to_C(data, system_is_metric):
     if system_is_metric:
         # values should already be in C
         return data
-    else:
-        # convert to F to C
-        if PROBE_UPPER_BOUND in data:
-            data[PROBE_UPPER_BOUND] = convert_temperatures(
-                UNIT_DEGREES_F, UNIT_DEGREES_C, data[PROBE_UPPER_BOUND]
-            )
-        if PROBE_LOWER_BOUND in data:
-            data[PROBE_LOWER_BOUND] = convert_temperatures(
-                UNIT_DEGREES_F, UNIT_DEGREES_C, data[PROBE_LOWER_BOUND]
-            )
+    # convert to F to C
+    if PROBE_UPPER_BOUND in data:
+        data[PROBE_UPPER_BOUND] = convert_temperatures(
+            UNIT_DEGREES_F, UNIT_DEGREES_C, data[PROBE_UPPER_BOUND]
+        )
+    if PROBE_LOWER_BOUND in data:
+        data[PROBE_LOWER_BOUND] = convert_temperatures(
+            UNIT_DEGREES_F, UNIT_DEGREES_C, data[PROBE_LOWER_BOUND]
+        )
     return data
 
 
@@ -52,15 +53,13 @@ def get_localized_temperature(val, system_is_metric):
     """Converts val in C to F if necessary."""
     if system_is_metric or not is_number(val):
         return val
-    else:
-        return convert_temperatures(UNIT_DEGREES_C, UNIT_DEGREES_F, val)
+    return round(convert_temperatures(UNIT_DEGREES_C, UNIT_DEGREES_F, val), 1)
 
 
 def get_localized_temperature_unit(system_is_metric):
     if system_is_metric:
         return "°C"
-    else:
-        return "°F"
+    return "°F"
 
 
 def is_number(s):
@@ -70,19 +69,14 @@ def is_number(s):
             return True
         except ValueError:
             return False
-    else:
-        return False
+    return False
 
 
 def parse_sensor_state(state):
     if not state:
         return STATE_UNKNOWN
-    elif is_number(state.state):
+    if is_number(state.state):
         return state.state
-    else:
-        if not state or not state.state:
-            return STATE_UNAVAILABLE
-        elif state.state == STATE_UNAVAILABLE:
-            return STATE_UNAVAILABLE
-        else:
-            return STATE_UNKNOWN
+    if not state or not state.state or state.state == STATE_UNAVAILABLE:
+        return STATE_UNAVAILABLE
+    return STATE_UNKNOWN
