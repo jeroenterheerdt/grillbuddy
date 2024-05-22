@@ -71,5 +71,11 @@ action: []
 mode: single
 ```
 
-## todo
+## todo and wishlist
 - add to hacs
+- presets:
+  - hot smoke (52-80 C)
+  - cold smoke (20-30 C)
+  - bbq smoke (102-110 C)
+  - hamburger: 75C
+- steak timer (cut type/thickness)
