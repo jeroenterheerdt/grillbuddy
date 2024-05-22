@@ -11,16 +11,16 @@
 [buymeacoffee-shield]: https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png
 
 # Grill Buddy
-Grill Buddy is your best friend for when you're grilling or bbqing! Grill Buddy makes it easy to use any Home Assistant integrated temperature probe and monitor your cooking. It includes presets for many proteins (beef, pork, vish, etc) as well as doneness (rare, medium, well-done, etc). You can ask Grill Buddy to monitor these goals:
-- target temperature
-- temperature between certain values
-- temperature outside certain values
-- temperature below a certain value
-- temperature above a certain value
+Grill Buddy is your grilling companion, designed to simplify temperature monitoring during barbecues and cookouts. It seamlessly integrates with Home Assistant and supports various presets for proteins (such as beef, pork, and fish) and doneness levels (rare, medium, well-done and more). With Grill Buddy, you can set and monitor the following goals:
 
-Whenever the goal has been reached, Grill Buddy will update the status to ```goal_reached```. Also, you will be able to see detailed status of your thermometer probe depending on the goal.
+- **Target Temperature**: Specify the desired temperature for your food.
+- **Temperature Range**: Monitor temperatures within specific value ranges.
+- **Out-of-Range Alerts**: Receive notifications when temperatures fall outside certain limits.
+- **Threshold Alerts**: Get notified when temperatures go below or above a specific value.
+- 
+Once your cooking goal is achieved, Grill Buddy updates the status to “goal reached.” Additionally, it provides detailed information about your thermometer probe’s status based on the chosen goal. Plus, it even predicts when you’ll reach your target temperature, allowing you to plan ahead! 🌡️🔥🍖
 
-What's more Grill Buddy will even predict when you are going to reach your target temperature so you plan ahead! Happy grilling!
+Remember to fire up the grill and enjoy your perfectly cooked meals! 🎉🔥
 
 ![](icon.png?raw=true)
 
