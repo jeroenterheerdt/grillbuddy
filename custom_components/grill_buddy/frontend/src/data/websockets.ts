@@ -32,7 +32,7 @@ export const deleteProbe = (
   probe_id: string,
 ): Promise<boolean> => {
   return hass.callApi("POST", DOMAIN + "/probes", {
-    id: probe_id,
+    probe_id: probe_id,
     remove: true,
   });
 };

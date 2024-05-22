@@ -1,42 +1,37 @@
 """The Smart Irrigation Integration."""
 
 import logging
+
 from config.custom_components.grill_buddy.helpers import (
     get_localized_temperature,
     switch_probe_temperatures_to_C,
 )
 from homeassistant.components.sensor import DOMAIN as PLATFORM
-from homeassistant.core import (
-    callback,
-)
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, asyncio
-from homeassistant.helpers import device_registry as dr
+from homeassistant.core import HomeAssistant, asyncio, callback
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.helpers.dispatcher import (
     async_dispatcher_connect,
     async_dispatcher_send,
 )
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util.unit_system import METRIC_SYSTEM
 
 from .const import (
     ATTR_REMOVE,
     COORDINATOR,
+    DOMAIN,
+    MANUFACTURER,
+    NAME,
     PROBE_LOWER_BOUND,
     PROBE_UPPER_BOUND,
     PROBES,
-    DOMAIN,
-    NAME,
     VERSION,
-    MANUFACTURER,
 )
 from .localize import localize
+from .panel import async_register_panel, async_unregister_panel
 from .store import async_get_registry
-from .panel import (
-    async_register_panel,
-    async_unregister_panel,
-)
 from .websockets import async_register_websockets
 
 _LOGGER = logging.getLogger(__name__)
@@ -189,7 +184,7 @@ class GrillBuddyCoordinator(DataUpdateCoordinator):
             self.store.async_get_config()
 
     async def async_remove_entity(self, probe_id: str):
-        entity_registry = self.hass.helpers.entity_registry.async_get()
+        entity_registry = er.async_get(self.hass)
         probe_id = int(probe_id)
         entity = self.hass.data[DOMAIN][PROBES][probe_id]
         entity_registry.async_remove(entity.entity_id)

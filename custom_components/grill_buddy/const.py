@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-VERSION = "v2024.4.0"
+VERSION = "v2024.5.0"
 NAME = "Grill Buddy"
 MANUFACTURER = "@jeroenterheerdt"
 
@@ -74,11 +74,6 @@ BELOW_UPPER_BOUND = "below_upper_bound"
 STATE_UPDATE_SETTINGS = "stateupdatesettings"
 STATE_UPDATE_SETTING_ID = "stateupdatesetting_id"
 STATE_UPDATE_SETTING_NAME = "stateupdatesetting_name"
-
-# Units
-UNIT_DEGREES_C = "°C"
-UNIT_DEGREES_F = "°F"
-UNIT_DEGREES_K = "K"
 
 # Conversion factors
 K_TO_C_FACTOR = 273.15  # K-factor = C, C+factor=K

@@ -16,6 +16,7 @@ from homeassistant.helpers.dispatcher import (
 )
 
 from .const import (
+    ATTR_REMOVE,
     DOMAIN,
     INPUT_NUMBER_DOMAIN,
     PRESETS,
@@ -94,6 +95,7 @@ class GrillBuddyProbeView(HomeAssistantView):
                 vol.Optional(PROBE_STATE_UPDATE_SETTING): vol.Or(int, None),
                 vol.Optional(PROBE_SOURCE_TYPE): vol.Or(cv.string, None),
                 vol.Optional(PROBE_TARGET_TEMPERATURE): vol.Or(int, float, None),
+                vol.Optional(ATTR_REMOVE): cv.boolean,
             }
         )
     )

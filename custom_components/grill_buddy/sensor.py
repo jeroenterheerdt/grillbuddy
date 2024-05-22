@@ -4,8 +4,8 @@ import logging
 from homeassistant.components.sensor import DOMAIN as PLATFORM, SensorEntity
 from homeassistant.components.sensor.const import SensorDeviceClass
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
-from homeassistant.core import HomeAssistant, callback, Event, EventStateChangedData
+from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN, UnitOfTemperature
+from homeassistant.core import Event, EventStateChangedData, HomeAssistant, callback
 from homeassistant.helpers.dispatcher import (
     async_dispatcher_connect,
     async_dispatcher_send,
@@ -49,8 +49,6 @@ from .const import (
     SENSOR_ICON,
     STATE_UPDATE_SETTING_ID,
     STATE_UPDATE_SETTING_NAME,
-    UNIT_DEGREES_C,
-    UNIT_DEGREES_F,
     VERSION,
     WITHIN_BOUNDS,
 )
@@ -193,7 +191,9 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             # if system is not metric, convert to metric before proceeding
             if not self._system_is_metric:
                 self._temperature = convert_temperatures(
-                    UNIT_DEGREES_F, UNIT_DEGREES_C, self._temperature
+                    UnitOfTemperature.FAHRENHEIT,
+                    UnitOfTemperature.CELSIUS,
+                    self._temperature,
                 )
             target_temperature = None
             if self._source_type == PROBE_SOURCE_TYPE_VALUE:
@@ -246,7 +246,9 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             else:
                 if not self._system_is_metric:
                     old_state = convert_temperatures(
-                        UNIT_DEGREES_F, UNIT_DEGREES_C, old_state
+                        UnitOfTemperature.FAHRENHEIT,
+                        UnitOfTemperature.CELSIUS,
+                        old_state,
                     )
                 delta = float(self._temperature) - float(old_state)
             if delta != 0:
@@ -304,6 +306,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
                 COORDINATOR
             ].store.async_get_state_update_setting(probe[PROBE_STATE_UPDATE_SETTING])
             self._source = probe[PROBE_SOURCE]
+            self._source_type = probe[PROBE_SOURCE_TYPE]
             self._preset = self._preset = self._hass.data[DOMAIN][
                 COORDINATOR
             ].store.async_get_preset(probe[PROBE_PRESET])
@@ -381,10 +384,6 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         localized_temperature_unit = get_localized_temperature_unit(
             self._system_is_metric
         )
-        if self._source_type == PROBE_SOURCE_TYPE_PRESET and self._preset is not None:
-            preset_attribute = f"{self._preset[PRESET_NAME]} ({get_localized_temperature(self._preset[PRESET_TARGET_TEMPERATURE], self._system_is_metric)} {localized_temperature_unit})"
-        else:
-            preset_attribute = None
         if (
             self._source_type == PROBE_SOURCE_TYPE_VALUE
             and self._target_temperature is not None
@@ -392,6 +391,13 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             target_temperature_attribute = f"{get_localized_temperature(self._target_temperature, self._system_is_metric)} {localized_temperature_unit}"
         else:
             target_temperature_attribute = None
+        if self._source_type == PROBE_SOURCE_TYPE_PRESET and self._preset is not None:
+            target_temperature_attribute = f"{get_localized_temperature(self._preset[PRESET_TARGET_TEMPERATURE], self._system_is_metric)} {localized_temperature_unit}"
+            preset_attribute = (
+                f"{self._preset[PRESET_NAME]} ({target_temperature_attribute})"
+            )
+        else:
+            preset_attribute = None
         if self._state_update_setting is not None:
             sus_attribute = f"{self._state_update_setting[STATE_UPDATE_SETTING_NAME]}"
         else:

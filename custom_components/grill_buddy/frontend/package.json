@@ -1,6 +1,6 @@
 {
   "name": "grillbuddy",
-  "version": "2024.4.0",
+  "version": "2024.5.0",
   "description": "Grill Buddy frontend",
   "main": "dist/grill-buddy.js",
   "scripts": {

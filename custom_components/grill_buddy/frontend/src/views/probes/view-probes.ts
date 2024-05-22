@@ -232,7 +232,8 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
             <input
               text="text"
               id="probe_target_temperature${index}"
-              value="${probe.probe_target_temperature}" @input="${(e: Event) =>
+              value="${probe.probe_target_temperature}"
+              @input="${(e: Event) =>
                 this.handleEditProbe(index, {
                   ...probe,
                   [PROBE_TARGET_TEMPERATURE]: parseInt(
@@ -344,6 +345,19 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
             ${this.renderTheUpdateStatusWhenOptions(this.state_update_settings, probe.probe_state_update_setting)}
           </select>
             </div>
+            <div class="probeline">
+            <svg
+                style="width:24px;height:24px"
+                viewBox="0 0 24 24"
+                id="deleteProbe${index}"
+                @click="${(e: Event) => this.handleRemoveProbe(e, index)}"
+              >
+                <title>
+                  ${localize("common.actions.delete", this.hass.language)}
+                </title>
+                <path fill="#404040" d="${mdiDelete}" />
+              </svg>
+              </div>
         </ha-card>
       `;
     }

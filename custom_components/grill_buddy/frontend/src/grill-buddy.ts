@@ -47,9 +47,6 @@ export class GrillBuddyPanel extends LitElement {
           .selected=${path.page}
           @iron-activate=${this.handlePageSelected}
         >
-          <paper-tab page-name="general">
-            ${localize("panels.general.title", this.hass.language)}
-          </paper-tab>
           <paper-tab page-name="probes">
             ${localize("panels.probes.title", this.hass.language)}
           </paper-tab>
@@ -62,17 +59,24 @@ export class GrillBuddyPanel extends LitElement {
     `;
   }
 
+  /*
+  <paper-tab page-name="general">
+            ${localize("panels.general.title", this.hass.language)}
+          </paper-tab>
+
+          */
+
   getView(path: Path) {
     const page = path.page;
     switch (page) {
-      case "general":
+      /*case "general":
         return html`
           <grill-buddy-view-general
             .hass=${this.hass}
             .narrow=${this.narrow}
             .path=${path}
           ></grill-buddy-view-general>
-        `;
+        `;*/
       case "probes":
         return html`
           <grill-buddy-view-probes
@@ -93,9 +97,9 @@ export class GrillBuddyPanel extends LitElement {
               "panels.help.cards.how-to-get-help.first-read-the",
               this.hass.language,
             )}
-            <a href="https://github.com/jeroenterheerdt/grill_buddy/wiki"
+            <a href="https://github.com/jeroenterheerdt/grill_buddy/"
               >${localize(
-                "panels.help.cards.how-to-get-help.wiki",
+                "panels.help.cards.how-to-get-help.readme",
                 this.hass.language,
               )}</a
             >.
@@ -103,6 +107,13 @@ export class GrillBuddyPanel extends LitElement {
               "panels.help.cards.how-to-get-help.if-you-still-need-help",
               this.hass.language,
             )}
+            <a
+              href="https://community.home-assistant.io/t/smart-irrigation-save-water-by-precisely-watering-your-lawn-garden"
+              >${localize(
+                "panels.help.cards.how-to-get-help.community-forum",
+                this.hass.language,
+              )}</a
+            >
             ${localize(
               "panels.help.cards.how-to-get-help.or-open-a",
               this.hass.language,

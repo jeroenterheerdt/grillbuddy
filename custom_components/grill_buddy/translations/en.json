@@ -16,7 +16,17 @@
       }
     }
   },
-  "options": {},
+  "options": {
+    "step": {
+      "init": {
+        "title": "General set up",
+        "description": "If you need help with the configuration, please see https://github.com/jeroenterheerdt/GrillBuddy",
+        "data": {
+          "name": "Unique name of the integration"
+        }
+      }
+    }
+  },
   "services": {},
   "defaults": {
     "presets": {

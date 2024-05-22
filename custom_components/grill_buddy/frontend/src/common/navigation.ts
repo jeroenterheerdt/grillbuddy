@@ -21,7 +21,7 @@ export const getPath = () => {
   const parts = window.location.pathname.split("/");
 
   let path: Path = {
-    page: parts[2] || "general",
+    page: parts[2] || "probes", //was "general", but since we don't have a general config page, defaulting to "probes"
     params: {},
   };
 

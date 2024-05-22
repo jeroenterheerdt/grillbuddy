@@ -1,25 +1,12 @@
-	1. probes:
+1. probes:
+		implement probe deletion
 		source (sensor)
 			ALSO ADD TO SMART IRRIGATION!
-	2. presets:
-		ability to define custom preset:
-			name
-			target temperature
-		SWITCHING FROM VALUE TO PRESET DOESN'T WORK YET
-	2b labels in options flow
-	2c NL translations
-	3. Notifications
+
+2. Docs:
 		don't send notifications, just provide examples in docs on how to use automation.
-	4. blocking calls fix
-2. Need to be able to set target temp for probes
-		a. Protein selection
-		b. Doneness
-		c. + manual specify (custom config)
-	3. Notifications when target temp is reached or has fallen below
-		a. Deadzones
+3. Nice to haves
 	4. Start timer after press a button
-	5. Predict when its going to be on temp
     6. Logo/Icon
-	7. native unit of measurement in sensor.py?
 	8. services?
 	9. implement time based things timers like stakemate?
