@@ -3,7 +3,6 @@ import logging
 
 import voluptuous as vol
 
-from config.custom_components.grill_buddy.helpers import get_localized_temperature
 from homeassistant.components import websocket_api
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.components.http.data_validator import RequestDataValidator
@@ -34,6 +33,7 @@ from .const import (
     SENSOR_DOMAIN,
     STATE_UPDATE_SETTINGS,
 )
+from .helpers import get_localized_temperature
 
 _LOGGER = logging.getLogger(__name__)
 

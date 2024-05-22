@@ -2,10 +2,6 @@
 
 import logging
 
-from config.custom_components.grill_buddy.helpers import (
-    get_localized_temperature,
-    switch_probe_temperatures_to_C,
-)
 from homeassistant.components.sensor import DOMAIN as PLATFORM
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, asyncio, callback
@@ -18,18 +14,8 @@ from homeassistant.helpers.dispatcher import (
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util.unit_system import METRIC_SYSTEM
 
-from .const import (
-    ATTR_REMOVE,
-    COORDINATOR,
-    DOMAIN,
-    MANUFACTURER,
-    NAME,
-    PROBE_LOWER_BOUND,
-    PROBE_UPPER_BOUND,
-    PROBES,
-    VERSION,
-)
-from .localize import localize
+from .const import ATTR_REMOVE, COORDINATOR, DOMAIN, MANUFACTURER, NAME, PROBES, VERSION
+from .helpers import switch_probe_temperatures_to_C
 from .panel import async_register_panel, async_unregister_panel
 from .store import async_get_registry
 from .websockets import async_register_websockets

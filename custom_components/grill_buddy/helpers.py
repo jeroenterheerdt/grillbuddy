@@ -1,10 +1,11 @@
-from config.custom_components.grill_buddy.const import (
+from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN, UnitOfTemperature
+
+from .const import (
     K_TO_C_FACTOR,
     PROBE_LOWER_BOUND,
     PROBE_TARGET_TEMPERATURE,
     PROBE_UPPER_BOUND,
 )
-from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN, UnitOfTemperature
 
 
 def convert_temperatures(from_unit, to_unit, val):
