@@ -13,7 +13,7 @@
 # Grill Buddy
 ![](icon.png?raw=true)
 
-Grill Buddy is your grilling companion, designed to simplify temperature monitoring during barbecues and cookouts. It seamlessly integrates with Home Assistant and supports various presets for proteins (such as beef, pork, and fish) and doneness levels (rare, medium, well-done and more). With Grill Buddy, you can set and monitor the following goals:
+Grill Buddy is your grilling companion, designed to simplify temperature monitoring during barbecues and cookouts. It seamlessly integrates with your Home Assistant enabled temperature sensors (probes) and supports various presets for proteins (such as beef, pork, and fish) and doneness levels (rare, medium, well-done and more). With Grill Buddy, you can set and monitor the following goals:
 
 - **Target Temperature**: Specify the desired temperature for your food.
 - **Temperature Range**: Monitor temperatures within specific value ranges.
