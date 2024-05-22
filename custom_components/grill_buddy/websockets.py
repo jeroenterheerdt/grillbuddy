@@ -24,7 +24,9 @@ from .const import (
     PROBE_NAME,
     PROBE_PRESET,
     PROBE_SOURCE,
+    PROBE_SOURCE_TYPE,
     PROBE_STATE_UPDATE_SETTING,
+    PROBE_TARGET_TEMPERATURE,
     PROBE_TEMPERATURE,
     PROBE_UPPER_BOUND,
     PROBES,
@@ -90,6 +92,8 @@ class GrillBuddyProbeView(HomeAssistantView):
                 vol.Optional(PROBE_LOWER_BOUND): vol.Or(int, float, None),
                 vol.Optional(PROBE_UPPER_BOUND): vol.Or(int, float, None),
                 vol.Optional(PROBE_STATE_UPDATE_SETTING): vol.Or(int, None),
+                vol.Optional(PROBE_SOURCE_TYPE): vol.Or(cv.string, None),
+                vol.Optional(PROBE_TARGET_TEMPERATURE): vol.Or(int, float, None),
             }
         )
     )
@@ -132,6 +136,9 @@ def websocket_get_probes(hass, connection, msg):
             )
             probes[p[PROBE_ID]][PROBE_UPPER_BOUND] = get_localized_temperature(
                 p[PROBE_UPPER_BOUND], False
+            )
+            probes[p[PROBE_ID]][PROBE_TARGET_TEMPERATURE] = get_localized_temperature(
+                p[PROBE_TARGET_TEMPERATURE], False
             )
     connection.send_result(msg["id"], probes)
 

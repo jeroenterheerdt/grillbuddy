@@ -38,7 +38,11 @@ from .const import (
     PROBE_NAME,
     PROBE_PRESET,
     PROBE_SOURCE,
+    PROBE_SOURCE_TYPE,
+    PROBE_SOURCE_TYPE_PRESET,
+    PROBE_SOURCE_TYPE_VALUE,
     PROBE_STATE_UPDATE_SETTING,
+    PROBE_TARGET_TEMPERATURE,
     PROBE_TEMPERATURE,
     PROBE_UPPER_BOUND,
     PROBES,
@@ -88,7 +92,9 @@ async def async_setup_entry(
             name=config[PROBE_NAME],
             id=config[PROBE_ID],
             source=config[PROBE_SOURCE],
+            source_type=config[PROBE_SOURCE_TYPE],
             preset=config[PROBE_PRESET],
+            target_temperature=config[PROBE_TARGET_TEMPERATURE],
             temperature=config[PROBE_TEMPERATURE],
             lower_bound=config[PROBE_LOWER_BOUND],
             upper_bound=config[PROBE_UPPER_BOUND],
@@ -112,7 +118,9 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         name: str,
         entity_id: str,
         source: str,
+        source_type: int,
         preset: float,
+        target_temperature: float,
         temperature: float,
         lower_bound: float,
         upper_bound: float,
@@ -130,11 +138,13 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         self._preset = self._hass.data[DOMAIN][COORDINATOR].store.async_get_preset(
             preset
         )
+        self._target_temperature = target_temperature
         self._temperature = temperature
         self._system_is_metric = hass.config.units is METRIC_SYSTEM
         self._status = None
         self._lower_bound = lower_bound
         self._upper_bound = upper_bound
+        self._source_type = source_type
         if self._preset is not None:
             if self._lower_bound is None:
                 self._lower_bound = self._preset[PRESET_TARGET_TEMPERATURE]
@@ -185,18 +195,22 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
                 self._temperature = convert_temperatures(
                     UNIT_DEGREES_F, UNIT_DEGREES_C, self._temperature
                 )
-            if (
-                is_number(self._temperature)
-                and self._preset
-                and is_number(self._preset[PRESET_TARGET_TEMPERATURE])
+            target_temperature = None
+            if self._source_type == PROBE_SOURCE_TYPE_VALUE:
+                target_temperature = self._target_temperature
+            elif (
+                self._source_type == PROBE_SOURCE_TYPE_PRESET
+                and self._preset is not None
             ):
+                target_temperature = self._preset[PRESET_TARGET_TEMPERATURE]
+            if is_number(self._temperature) and is_number(target_temperature):
                 # handle state update settings here
                 if (
                     self._state_update_setting[STATE_UPDATE_SETTING_ID] == 0
                 ):  # at target temperature
-                    if self._temperature < self._preset[PRESET_TARGET_TEMPERATURE]:
+                    if self._temperature < target_temperature:
                         self._status = BELOW_TARGET_TEMPERATURE
-                    elif self._temperature > self._preset[PRESET_TARGET_TEMPERATURE]:
+                    elif self._temperature > target_temperature:
                         self._status = ABOVE_TARGET_TEMPERATURE
                     else:
                         self._status = AT_TARGET_TEMPERATURE
@@ -247,13 +261,13 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
                 if time_diff_seconds != 0:
                     delta_per_second = delta / time_diff_seconds
 
-                    if self._temperature > self._preset[PRESET_TARGET_TEMPERATURE]:
+                    if self._temperature > target_temperature:
                         self._time_to_target = (
-                            self._temperature - self._preset[PRESET_TARGET_TEMPERATURE]
+                            self._temperature - target_temperature
                         ) / delta_per_second
-                    elif self._temperature < self._preset[PRESET_TARGET_TEMPERATURE]:
+                    elif self._temperature < target_temperature:
                         self._time_to_target = (
-                            self._preset[PRESET_TARGET_TEMPERATURE] - self._temperature
+                            target_temperature - self._temperature
                         ) / delta_per_second
                     else:
                         self._time_to_target = 0
@@ -298,7 +312,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
                     self._lower_bound = self._preset[PRESET_TARGET_TEMPERATURE]
                 if self._upper_bound is None:
                     self._upper_bound = self._preset[PRESET_TARGET_TEMPERATURE]
-
+            self._target_temperature = probe[PROBE_TARGET_TEMPERATURE]
             self.async_watch_sensor_states()
             self.async_schedule_update_ha_state()
 
@@ -367,10 +381,17 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         localized_temperature_unit = get_localized_temperature_unit(
             self._system_is_metric
         )
-        if self._preset is not None:
+        if self._source_type == PROBE_SOURCE_TYPE_PRESET and self._preset is not None:
             preset_attribute = f"{self._preset[PRESET_NAME]} ({get_localized_temperature(self._preset[PRESET_TARGET_TEMPERATURE], self._system_is_metric)} {localized_temperature_unit})"
         else:
             preset_attribute = None
+        if (
+            self._source_type == PROBE_SOURCE_TYPE_VALUE
+            and self._target_temperature is not None
+        ):
+            target_temperature_attribute = f"{get_localized_temperature(self._target_temperature, self._system_is_metric)} {localized_temperature_unit}"
+        else:
+            target_temperature_attribute = None
         if self._state_update_setting is not None:
             sus_attribute = f"{self._state_update_setting[STATE_UPDATE_SETTING_NAME]}"
         else:
@@ -379,6 +400,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
             "id": self._id,
             "source": self._source,
             "preset": preset_attribute,
+            "target temperature": target_temperature_attribute,
             "status": self._status,
             "lower bound": f"{get_localized_temperature(self._lower_bound,self._system_is_metric)} {localized_temperature_unit}",
             "upper bound": f"{get_localized_temperature(self._upper_bound,self._system_is_metric)} {localized_temperature_unit}",

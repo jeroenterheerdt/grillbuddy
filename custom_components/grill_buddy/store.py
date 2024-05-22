@@ -22,8 +22,10 @@ from .const import (
     PRESET_TARGET_TEMPERATURE,
     PROBE_LOWER_BOUND,
     PROBE_LOWER_BOUND_DEFAULT,
+    PROBE_SOURCE_TYPE,
     PROBE_STATE_UPDATE_SETTING,
     PROBE_STATE_UPDATE_SETTING_DEFAULT,
+    PROBE_TARGET_TEMPERATURE,
     PROBE_TEMPERATURE,
     PRESETS,
     PROBE_UPPER_BOUND,
@@ -33,6 +35,7 @@ from .const import (
     PROBE_NAME,
     PROBE_SOURCE,
     PROBE_PRESET,
+    PROBE_SOURCE_TYPE_VALUE,
     STATE_UPDATE_SETTING_ID,
     STATE_UPDATE_SETTING_NAME,
     STATE_UPDATE_SETTINGS,
@@ -61,6 +64,8 @@ class ProbeEntry:
     probe_state_update_setting = attr.ib(
         type=int, default=PROBE_STATE_UPDATE_SETTING_DEFAULT
     )
+    probe_source_type = attr.ib(type=str, default=PROBE_SOURCE_TYPE_VALUE)
+    probe_target_temperature = attr.ib(type=float, default=None)
 
 
 @attr.s(slots=True, frozen=True)
@@ -145,6 +150,12 @@ class GrillBuddyStorage:
                             PROBE_STATE_UPDATE_SETTING,
                             PROBE_STATE_UPDATE_SETTING_DEFAULT,
                         ),
+                        probe_source_type=probe.get(
+                            PROBE_SOURCE_TYPE, PROBE_SOURCE_TYPE_VALUE
+                        ),
+                        probe_target_temperature=probe.get(
+                            PROBE_TARGET_TEMPERATURE, None
+                        ),
                     )
             if PRESETS in data:
                 for preset in data[PRESETS]:
@@ -182,6 +193,7 @@ class GrillBuddyStorage:
         self.async_schedule_save()
 
     async def async_factory_default_probes(self):
+        # no default probes
         return
 
     async def async_factory_default_stateupdatesettings(self):

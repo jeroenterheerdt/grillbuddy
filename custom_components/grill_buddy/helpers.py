@@ -1,6 +1,7 @@
 from config.custom_components.grill_buddy.const import (
     K_TO_C_FACTOR,
     PROBE_LOWER_BOUND,
+    PROBE_TARGET_TEMPERATURE,
     PROBE_UPPER_BOUND,
     UNIT_DEGREES_C,
     UNIT_DEGREES_F,
@@ -45,6 +46,10 @@ def switch_probe_temperatures_to_C(data, system_is_metric):
     if PROBE_LOWER_BOUND in data:
         data[PROBE_LOWER_BOUND] = convert_temperatures(
             UNIT_DEGREES_F, UNIT_DEGREES_C, data[PROBE_LOWER_BOUND]
+        )
+    if PROBE_TARGET_TEMPERATURE in data:
+        data[PROBE_TARGET_TEMPERATURE] = convert_temperatures(
+            UNIT_DEGREES_F, UNIT_DEGREES_C, data[PROBE_TARGET_TEMPERATURE]
         )
     return data
 

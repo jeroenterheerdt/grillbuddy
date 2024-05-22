@@ -14,7 +14,7 @@ import {
   fetchStateUpdateSettings,
   fetchSensors,
 } from "../../data/websockets";
-import { mdiDelete} from "@mdi/js";
+import { mdiDelete } from "@mdi/js";
 import { SubscribeMixin } from "../../subscribe-mixin";
 
 import { Config, Preset, Probe, StateUpdateSettings } from "../../types";
@@ -26,7 +26,11 @@ import {
   PROBE_NAME,
   PROBE_PRESET,
   PROBE_SOURCE,
+  PROBE_SOURCE_TYPE,
+  PROBE_SOURCE_TYPE_PRESET,
+  PROBE_SOURCE_TYPE_VALUE,
   PROBE_STATE_UPDATE_SETTING,
+  PROBE_TARGET_TEMPERATURE,
   PROBE_UPPER_BOUND,
 } from "../../const";
 import { localizeTemperatureUnit, localizeTemperature } from "../../helpers";
@@ -88,6 +92,7 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
       probe_id: this.probes.length, //new probe will have ID that is equal to current probe length.
       probe_name: this.nameInput.value,
       probe_source: this.sourceInput.value,
+      probe_source_type: PROBE_SOURCE_TYPE_PRESET,
       probe_preset: undefined,
     };
 
@@ -188,6 +193,56 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
     if (!this.hass) {
       return html``;
     } else {
+      let r = html``;
+      const sourcetypepreset =
+        probe.probe_source_type === PROBE_SOURCE_TYPE_PRESET;
+      if (sourcetypepreset) {
+        r = html`
+          <div class="probeline">
+            <label for="probe_preset${index}"
+              >${localize(
+                "panels.probes.labels.preset",
+                this.hass.language,
+              )}:</label
+            >
+            <select
+              id="probe_preset${index}"
+              @change="${(e: Event) =>
+                this.handleEditProbe(index, {
+                  ...probe,
+                  [PROBE_PRESET]: parseInt(
+                    (e.target as HTMLSelectElement).value,
+                  ),
+                })}"
+            >
+              ${this.renderTheOptions(this.presets, probe.probe_preset)}
+            </select>
+          </div>
+        `;
+      } else {
+        //source type is value
+        r = html`
+          <div class="probeline">
+            <label for="probe_target_temperature${index}"
+              >${localize(
+                "panels.probes.labels.value",
+                this.hass.language,
+              )}:</label
+            >
+            <input
+              text="text"
+              id="probe_target_temperature${index}"
+              value="${probe.probe_target_temperature}" @input="${(e: Event) =>
+                this.handleEditProbe(index, {
+                  ...probe,
+                  [PROBE_TARGET_TEMPERATURE]: parseInt(
+                    (e.target as HTMLSelectElement).value,
+                  ),
+                })}"
+            />
+          </div>
+        `;
+      }
       return html`
         <ha-card header="${probe.probe_name}">
           <div class="card-content">
@@ -229,28 +284,26 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
               </select>
             </div>
             <div class="probeline">
-            <label for="probe_preset${index}">${localize(
-              "panels.probes.labels.preset",
-              this.hass.language,
-            )}:</label>
-            <select
-            id="probe_preset${index}"
-            @change="${(e: Event) =>
+            <label for="probe_source_type${index}">${localize("panels.probes.labels.sourcetype", this.hass.language)}:</label>
+            <input type="radio" id="probe_source_type_preset${index}" value="${PROBE_SOURCE_TYPE_PRESET}" name="probe_source_type${index}"
+            ?checked="${sourcetypepreset}" @change="${(e: Event) =>
               this.handleEditProbe(index, {
                 ...probe,
-                [PROBE_PRESET]: parseInt((e.target as HTMLSelectElement).value),
-              })}"
-          >
-            ${this.renderTheOptions(this.presets, probe.probe_preset)}
-          </select>
-
-            </div>
+                [PROBE_SOURCE_TYPE]: (e.target as HTMLInputElement).value,
+              })}"/>
+              <label for="probe_source_type_preset${index}">${localize("panels.probes.labels.sourcetypes.preset", this.hass.language)}</label>
+              <input type="radio" id="probe_source_type_value${index}" value="${PROBE_SOURCE_TYPE_VALUE}" name="probe_source_type${index}"
+              ?checked="${!sourcetypepreset}" @change="${(e: Event) =>
+                this.handleEditProbe(index, {
+                  ...probe,
+                  [PROBE_SOURCE_TYPE]: (e.target as HTMLInputElement).value,
+                })}"/><label for="probe_source_type_value${index}">${localize("panels.probes.labels.sourcetypes.value", this.hass.language)}</label>
+            </div>${r}
             <div class="probeline">
-            <label for="probe_lower_bound${index}">${localize(
-              "panels.probes.labels.lower_bound",
-              this.hass.language,
-            )}:</label>
-      <input id="probe_lower_bound${index}" class="shortinput" type="text"
+      <label for="probe_lower_bound${index}">${localize(
+        "panels.probes.labels.lower_bound",
+        this.hass.language,
+      )}:</label><input id="probe_lower_bound${index}" class="shortinput" type = "text"
       .value="${probe.probe_lower_bound}"
       @input="${(e: Event) =>
         this.handleEditProbe(index, {

@@ -59,7 +59,13 @@
         "preset": "Preset",
         "state_update_setting": "Update state when",
         "upper_bound": "Upper bound",
-        "lower_bound": "Lower bound"
+        "lower_bound": "Lower bound",
+        "sourcetype": "Get target temperature from",
+        "sourcetypes": {
+          "preset": "Preset",
+          "value": "Custom value"
+        },
+        "value": "Target temperature"
       },
       "cards": {
         "add-probe": {

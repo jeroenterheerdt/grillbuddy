@@ -40,6 +40,7 @@ PROBE_TEMPERATURE = "probe_temperature"
 PROBE_UPPER_BOUND = "probe_upper_bound"
 PROBE_LOWER_BOUND = "probe_lower_bound"
 PROBE_STATE_UPDATE_SETTING = "probe_state_update_setting"
+PROBE_SOURCE_TYPE = "probe_source_type"
 SENSOR_ICON = "mdi:grill"
 PRESETS = "presets"
 PRESET_ID = "preset_id"
@@ -48,6 +49,10 @@ PRESET_PROTEIN = "preset_protein"
 PRESET_DONENESS = "preset_doneness"
 PRESET_TARGET_TEMPERATURE = "preset_target_temperature"
 PRESET_ICON = "preset_icon"
+PROBE_SOURCE_TYPE_PRESET = "source_type_preset"
+PROBE_SOURCE_TYPE_VALUE = "source_type_value"
+PROBE_TARGET_TEMPERATURE = "probe_target_temperature"
+
 
 # Defaults
 PROBE_UPPER_BOUND_DEFAULT = None

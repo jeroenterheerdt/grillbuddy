@@ -5,6 +5,7 @@
 		ability to define custom preset:
 			name
 			target temperature
+		SWITCHING FROM VALUE TO PRESET DOESN'T WORK YET
 	2b labels in options flow
 	2c NL translations
 	3. Notifications
