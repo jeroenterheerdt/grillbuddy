@@ -10,8 +10,9 @@
 [buymeacoffee]: https://www.buymeacoffee.com/dutchdatadude
 [buymeacoffee-shield]: https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png
 
-# grillbuddy
+# Grill Buddy
 Grill Buddy for Home Assistant. This readme will be expanded.
+![](logo.png?raw=true)
 
 ## todo
 - add to hacs
