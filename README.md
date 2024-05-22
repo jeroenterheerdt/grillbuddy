@@ -29,6 +29,7 @@ Remember to fire up the grill and enjoy your perfectly cooked meals! 🎉🔥
 In this section:
 - [Installation](#step-1-installation)
 - [Configuration](#step-2-configuration)
+- [Usage](#step-3-usage)
   
 ### Step 1: Installation
 Install the custom integration (preferably using HACS). After downloading Grill Buddy from HACS, add the integration by searcing 'Grill Buddy' in your configuration and follow the prompts.
@@ -36,9 +37,39 @@ Install the custom integration (preferably using HACS). After downloading Grill 
 ### Step 2: Configuration
 After the integration has been installed, you will find a new panel named 'Grill Buddy' in your side bar. Use it to configure your set up which includes setting up probes, their source sensors and the goals.
 
+### Step 3: Usage
+After you set up your probes and have set goals, such as target temperature, you can build automations to do whatever you want with the information that Grill Buddy provides.
+For example, if you want to send yourself a notification when your goal has been reached you can use the following set up:
 
+```
+alias: Grill Buddy monitoring status for probe `test`
+description: ""
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.grill_buddy_test
+    attribute: Status
+    from: goal_not_reached
+    to: goal_reached
+condition: []
+action: []
+mode: single
+```
 
+You can of course also use the other attributes to do interesting things, such as sending a notification when there is 1 minute to go to reach your target:
+```
+alias: Grill Buddy trigger less than 1 minute to go for probe `test`
+description: ""
+trigger:
+  - platform: numeric_state
+    entity_id:
+      - sensor.grill_buddy_test
+    attribute: Time to target
+    below: 60
+condition: []
+action: []
+mode: single
+```
 
 ## todo
 - add to hacs
-- expand readme with automation examples
