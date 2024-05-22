@@ -4303,7 +4303,7 @@
             .narrow=${this.narrow}
           ></ha-menu-button>
           <div class="main-title">${Hr("title", this.hass.language)}</div>
-          <div class="version">${"v2024.5.1"}</div>
+          <div class="version">${"v2024.5.2"}</div>
         </div>
 
         <ha-tabs

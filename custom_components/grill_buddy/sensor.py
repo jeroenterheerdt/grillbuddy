@@ -259,7 +259,11 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
 
             # add prediction
 
-            if not is_number(old_state) or not is_number(self._temperature):
+            if (
+                not is_number(old_state)
+                or not is_number(self._temperature)
+                or not is_number(target_temperature)
+            ):
                 delta = 0
             else:
                 if not self._system_is_metric:
