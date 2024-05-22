@@ -1,0 +1,5 @@
+{
+    "name": "Grill Buddy",
+    "render_readme": true,
+    "domains": ["sensor"]
+  }
