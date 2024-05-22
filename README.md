@@ -12,7 +12,7 @@
 
 # Grill Buddy
 Grill Buddy for Home Assistant. This readme will be expanded.
-![](logo.png?raw=true)
+![](icon.png?raw=true)
 
 ## todo
 - add to hacs
