@@ -42,4 +42,3 @@ After the integration has been installed, you will find a new panel named 'Grill
 ## todo
 - add to hacs
 - expand readme with automation examples
-- change logic to generic status
