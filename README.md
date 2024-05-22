@@ -11,18 +11,19 @@
 [buymeacoffee-shield]: https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png
 
 # Grill Buddy
+![](icon.png?raw=true)
+
 Grill Buddy is your grilling companion, designed to simplify temperature monitoring during barbecues and cookouts. It seamlessly integrates with Home Assistant and supports various presets for proteins (such as beef, pork, and fish) and doneness levels (rare, medium, well-done and more). With Grill Buddy, you can set and monitor the following goals:
 
 - **Target Temperature**: Specify the desired temperature for your food.
 - **Temperature Range**: Monitor temperatures within specific value ranges.
 - **Out-of-Range Alerts**: Receive notifications when temperatures fall outside certain limits.
 - **Threshold Alerts**: Get notified when temperatures go below or above a specific value.
-- 
+
 Once your cooking goal is achieved, Grill Buddy updates the status to “goal reached.” Additionally, it provides detailed information about your thermometer probe’s status based on the chosen goal. Plus, it even predicts when you’ll reach your target temperature, allowing you to plan ahead! 🌡️🔥🍖
 
 Remember to fire up the grill and enjoy your perfectly cooked meals! 🎉🔥
 
-![](icon.png?raw=true)
 
 ## Configuration
 In this section:
