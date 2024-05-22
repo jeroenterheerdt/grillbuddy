@@ -5,8 +5,9 @@
 
 2. Docs:
 		don't send notifications, just provide examples in docs on how to use automation.
-3. Nice to haves
+3. Logo/Icon
+9999. Nice to haves
 	4. Start timer after press a button
-    6. Logo/Icon
+
 	8. services?
 	9. implement time based things timers like stakemate?
