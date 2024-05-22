@@ -79,3 +79,5 @@ mode: single
   - bbq smoke (102-110 C)
   - hamburger: 75C
 - steak timer (cut type/thickness)
+- timer handling per probe
+- which services do we need?
