@@ -15,7 +15,7 @@
         "name": "Naam",
         "source": "Bron",
         "preset": "Instelling",
-        "state_update_setting": "Pas status aan als",
+        "state_update_setting": "Doel",
         "upper_bound": "Minimum",
         "lower_bound": "Maximum",
         "sourcetype": "Stel doeltemperatuur in met",

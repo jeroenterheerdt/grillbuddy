@@ -28,6 +28,8 @@ from .const import (
     BELOW_UPPER_BOUND,
     COORDINATOR,
     DOMAIN,
+    GOAL_NOT_REACHED,
+    GOAL_REACHED,
     MANUFACTURER,
     NAME,
     OUTSIDE_BOUNDS,
@@ -46,6 +48,16 @@ from .const import (
     PROBE_TEMPERATURE,
     PROBE_UPPER_BOUND,
     PROBES,
+    SENSOR_ATTR_ID,
+    SENSOR_ATTR_SOURCE,
+    SENSOR_ATTR_STATE_UPDATE_SETTING,
+    SENSOR_ATTR_LOWER_BOUND,
+    SENSOR_ATTR_TIME_TO_TARGET,
+    SENSOR_ATTR_TARGET_TEMPERATURE,
+    SENSOR_ATTR_GOAL_SPECIFIC_STATUS,
+    SENSOR_ATTR_PRESET,
+    SENSOR_ATTR_STATUS,
+    SENSOR_ATTR_UPPER_BOUND,
     SENSOR_ICON,
     STATE_UPDATE_SETTING_ID,
     STATE_UPDATE_SETTING_NAME,
@@ -139,6 +151,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         self._target_temperature = target_temperature
         self._temperature = temperature
         self._system_is_metric = hass.config.units is METRIC_SYSTEM
+        self._goal_specific_status = None
         self._status = None
         self._lower_bound = lower_bound
         self._upper_bound = upper_bound
@@ -203,17 +216,19 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
                 and self._preset is not None
             ):
                 target_temperature = self._preset[PRESET_TARGET_TEMPERATURE]
+            self._status = GOAL_NOT_REACHED
             if is_number(self._temperature) and is_number(target_temperature):
                 # handle state update settings here
                 if (
                     self._state_update_setting[STATE_UPDATE_SETTING_ID] == 0
                 ):  # at target temperature
                     if self._temperature < target_temperature:
-                        self._status = BELOW_TARGET_TEMPERATURE
+                        self._goal_specific_status = BELOW_TARGET_TEMPERATURE
                     elif self._temperature > target_temperature:
-                        self._status = ABOVE_TARGET_TEMPERATURE
+                        self._goal_specific_status = ABOVE_TARGET_TEMPERATURE
                     else:
-                        self._status = AT_TARGET_TEMPERATURE
+                        self._goal_specific_status = AT_TARGET_TEMPERATURE
+                        self._status = GOAL_REACHED
                 elif (
                     self._state_update_setting[STATE_UPDATE_SETTING_ID] == 1
                 ):  # within bounds
@@ -221,23 +236,26 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
                         self._temperature >= self.get_lower_bound()
                         and self._temperature <= self.get_upper_bound()
                     ):
-                        self._status = WITHIN_BOUNDS
+                        self._goal_specific_status = WITHIN_BOUNDS
+                        self._status = GOAL_REACHED
                     else:
-                        self._status = OUTSIDE_BOUNDS
+                        self._goal_specific_status = OUTSIDE_BOUNDS
                 elif (
                     self._state_update_setting[STATE_UPDATE_SETTING_ID] == 2
                 ):  # below_lower_bound
                     if self._temperature < self.get_lower_bound():
-                        self._status = BELOW_LOWER_BOUND
+                        self._goal_specific_status = BELOW_LOWER_BOUND
+                        self._status = GOAL_REACHED
                     else:
-                        self._status = ABOVE_LOWER_BOUND
+                        self._goal_specific_status = ABOVE_LOWER_BOUND
                 elif (
                     self._state_update_setting[STATE_UPDATE_SETTING_ID] == 3
                 ):  # above_upper_bound
                     if self._temperature > self.get_upper_bound():
-                        self._status = ABOVE_UPPER_BOUND
+                        self._goal_specific_status = ABOVE_UPPER_BOUND
+                        self._status = GOAL_REACHED
                     else:
-                        self._status = BELOW_UPPER_BOUND
+                        self._goal_specific_status = BELOW_UPPER_BOUND
 
             # add prediction
 
@@ -275,12 +293,6 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
                         self._time_to_target = 0
                     if self._time_to_target < 0:
                         self._time_to_target = None
-                    else:
-                        # format to hh:mm:ss
-                        td = str(timedelta(seconds=self._time_to_target))
-                        x = td.split(":")
-                        self._time_to_target = f"{x[0]}:{x[1]}:{x[2].split(".")[0]}"
-
             self.async_schedule_update_ha_state()
 
     def get_lower_bound(self):
@@ -403,15 +415,16 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
         else:
             sus_attribute = None
         return {
-            "id": self._id,
-            "source": self._source,
-            "preset": preset_attribute,
-            "target temperature": target_temperature_attribute,
-            "status": self._status,
-            "lower bound": f"{get_localized_temperature(self._lower_bound,self._system_is_metric)} {localized_temperature_unit}",
-            "upper bound": f"{get_localized_temperature(self._upper_bound,self._system_is_metric)} {localized_temperature_unit}",
-            "state update setting": f"{sus_attribute}",
-            "time to target": self._time_to_target,
+            SENSOR_ATTR_ID: self._id,
+            SENSOR_ATTR_SOURCE: self._source,
+            SENSOR_ATTR_PRESET: preset_attribute,
+            SENSOR_ATTR_TARGET_TEMPERATURE: target_temperature_attribute,
+            SENSOR_ATTR_STATUS: self._status,
+            SENSOR_ATTR_GOAL_SPECIFIC_STATUS: self._goal_specific_status,
+            SENSOR_ATTR_LOWER_BOUND: f"{get_localized_temperature(self._lower_bound,self._system_is_metric)} {localized_temperature_unit}",
+            SENSOR_ATTR_UPPER_BOUND: f"{get_localized_temperature(self._upper_bound,self._system_is_metric)} {localized_temperature_unit}",
+            SENSOR_ATTR_STATE_UPDATE_SETTING: f"{sus_attribute}",
+            SENSOR_ATTR_TIME_TO_TARGET: self._time_to_target,
         }
 
     async def async_added_to_hass(self):

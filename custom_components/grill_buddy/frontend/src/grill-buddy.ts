@@ -108,7 +108,7 @@ export class GrillBuddyPanel extends LitElement {
               this.hass.language,
             )}
             <a
-              href="https://community.home-assistant.io/t/smart-irrigation-save-water-by-precisely-watering-your-lawn-garden"
+              href="https://community.home-assistant.io/t/grill-buddy-your-grilling-companion"
               >${localize(
                 "panels.help.cards.how-to-get-help.community-forum",
                 this.hass.language,

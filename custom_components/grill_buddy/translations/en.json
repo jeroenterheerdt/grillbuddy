@@ -57,9 +57,9 @@
   },
   "state_update_settings": {
     "at_target_temperature": "At target temperature",
-    "within_bounds": "Temperature within bounds",
-    "outside_bounds": "Temperature outside bounds",
-    "above_upper_bound": "Temperature above upper bound",
-    "below_lower_bound": "Temperature below lower bound"
+    "within_bounds": "Temperature within range",
+    "outside_bounds": "Temperature outside range",
+    "above_upper_bound": "Temperature above upper threshold",
+    "below_lower_bound": "Temperature below lower threshold"
   }
 }

@@ -15,9 +15,9 @@
         "name": "Name",
         "source": "Source",
         "preset": "Preset",
-        "state_update_setting": "Update state when",
-        "upper_bound": "Upper bound",
-        "lower_bound": "Lower bound",
+        "state_update_setting": "Goal",
+        "upper_bound": "Upper threshold",
+        "lower_bound": "Lower threshold",
         "sourcetype": "Get target temperature from",
         "sourcetypes": {
           "preset": "Preset",

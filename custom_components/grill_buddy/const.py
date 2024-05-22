@@ -53,7 +53,6 @@ PROBE_SOURCE_TYPE_PRESET = "source_type_preset"
 PROBE_SOURCE_TYPE_VALUE = "source_type_value"
 PROBE_TARGET_TEMPERATURE = "probe_target_temperature"
 
-
 # Defaults
 PROBE_UPPER_BOUND_DEFAULT = None
 PROBE_LOWER_BOUND_DEFAULT = None
@@ -63,17 +62,32 @@ PROBE_STATE_UPDATE_SETTING_DEFAULT = 0
 AT_TARGET_TEMPERATURE = "at_target_temperature"
 BELOW_TARGET_TEMPERATURE = "below_target_temperature"
 ABOVE_TARGET_TEMPERATURE = "above_target_temperature"
-WITHIN_BOUNDS = "within_bounds"
-OUTSIDE_BOUNDS = "outside_bounds"
-BELOW_LOWER_BOUND = "below_lower_bound"
-ABOVE_LOWER_BOUND = "above_lower_bound"
-ABOVE_UPPER_BOUND = "above_upper_bound"
-BELOW_UPPER_BOUND = "below_upper_bound"
+WITHIN_BOUNDS = "within_range"
+OUTSIDE_BOUNDS = "outside_range"
+BELOW_LOWER_BOUND = "below_lower_threshold"
+ABOVE_LOWER_BOUND = "above_lower_threshold"
+ABOVE_UPPER_BOUND = "above_upper_threshold"
+BELOW_UPPER_BOUND = "below_upper_threshold"
+GOAL_NOT_REACHED = "goal_not_reached"
+GOAL_REACHED = "goal_reached"
 
 # State update settings
 STATE_UPDATE_SETTINGS = "stateupdatesettings"
 STATE_UPDATE_SETTING_ID = "stateupdatesetting_id"
 STATE_UPDATE_SETTING_NAME = "stateupdatesetting_name"
+
+# Sensor attributes
+SENSOR_ATTR_ID = "ID"
+SENSOR_ATTR_SOURCE = "Source"
+SENSOR_ATTR_PRESET = "Preset"
+SENSOR_ATTR_TARGET_TEMPERATURE = "Target temperature"
+SENSOR_ATTR_STATUS = "Status"
+SENSOR_ATTR_GOAL_SPECIFIC_STATUS = "Goal specific status"
+SENSOR_ATTR_STATE_UPDATE_SETTING = "Goal"
+SENSOR_ATTR_UPPER_BOUND = "Upper threshold"
+SENSOR_ATTR_LOWER_BOUND = "Lower threshold"
+SENSOR_ATTR_SOURCE_TYPE = "Get target temperature from"
+SENSOR_ATTR_TIME_TO_TARGET = "Time to target (s)"
 
 # Conversion factors
 K_TO_C_FACTOR = 273.15  # K-factor = C, C+factor=K
