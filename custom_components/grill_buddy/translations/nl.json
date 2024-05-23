@@ -27,39 +27,5 @@
       }
     }
   },
-  "services": {},
-  "defaults": {
-    "presets": {
-      "beef_rare": "Rundvlees (rare)",
-      "beef_medium_rare": "Rundvlees (medium rare)",
-      "beef_medium": "Rundvlees (medium)",
-      "beef_medium_well": "Rundvlees (medium well)",
-      "beef_well_done": "Rundvlees (well done)",
-      "fish": "Vis",
-      "ground_beef": "Rundvleesgehakt",
-      "ground_poultry": "Gevogeltegehakt",
-      "lamb_rare": "Lamsvlees (rare)",
-      "lamb_medium_rare": "Lamvlees (medium rare)",
-      "lamb_medium": "Lamsvlees (medium)",
-      "lamb_medium_well": "Lamsvlees (medium well)",
-      "lamb_well_done": "Lamsvlees (well done)",
-      "pork_medium": "Varkensvlees (medium)",
-      "pork_medium_well": "Varkensvlees (medium well)",
-      "pork_well_done": "Varkensvlees (well done)",
-      "poultry": "Gevogelte",
-      "turkey": "Kalkoen",
-      "veal_rare": "Kalfsvlees (rare)",
-      "veal_medium_rare": "Kalfsvlees (medium rare)",
-      "veal_medium": "Kalfsvlees (medium)",
-      "veal_medium_well": "Kalfsvlees (medium well)",
-      "veal_well_done": "Kalfsvlees (well done)"
-    }
-  },
-  "state_update_settings": {
-    "at_target_temperature": "Temperatuur bereikt",
-    "within_bounds": "Temperatuur binnen bereik",
-    "outside_bounds": "Temperatuur buiten bereik",
-    "above_upper_bound": "Temperatuur hoger dan maximum",
-    "below_lower_bound": "Temperatuur lager dan minimum"
-  }
+  "services": {}
 }

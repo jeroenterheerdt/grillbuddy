@@ -54,5 +54,39 @@
       }
     }
   },
-  "title": "Grill Buddy"
+  "title": "Grill Buddy",
+  "defaults": {
+    "presets": {
+      "beef_rare": "Beef (rare)",
+      "beef_medium_rare": "Beef (medium rare)",
+      "beef_medium": "Beef (medium)",
+      "beef_medium_well": "Beef (medium well)",
+      "beef_well_done": "Beef (well done)",
+      "fish": "Fish",
+      "ground_beef": "Ground Beef",
+      "ground_poultry": "Ground Poultry",
+      "lamb_rare": "Lamb (rare)",
+      "lamb_medium_rare": "Lamb (medium rare)",
+      "lamb_medium": "Lamb (medium)",
+      "lamb_medium_well": "Lamb (medium well)",
+      "lamb_well_done": "Lamb (well done)",
+      "pork_medium": "Pork (medium)",
+      "pork_medium_well": "Pork (medium well)",
+      "pork_well_done": "Pork (well done)",
+      "poultry": "Poultry",
+      "turkey": "Turkey",
+      "veal_rare": "Veal (rare)",
+      "veal_medium_rare": "Veal (medium rare)",
+      "veal_medium": "Veal (medium)",
+      "veal_medium_well": "Veal (medium well)",
+      "veal_well_done": "Veal (well done)"
+    }
+  },
+  "state_update_settings": {
+    "at_target_temperature": "At target temperature",
+    "within_bounds": "Temperature within range",
+    "outside_bounds": "Temperature outside range",
+    "above_upper_bound": "Temperature above upper threshold",
+    "below_lower_bound": "Temperature below lower threshold"
+  }
 }
