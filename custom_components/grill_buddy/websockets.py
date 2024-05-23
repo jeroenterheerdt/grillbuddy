@@ -110,6 +110,7 @@ class GrillBuddyProbeView(HomeAssistantView):
         # drop probe_temperature if present
         if PROBE_TEMPERATURE in data:
             del data[PROBE_TEMPERATURE]
+
         await coordinator.async_update_probe_config(probe, data)
         async_dispatcher_send(hass, DOMAIN + "_update_frontend")
         return self.json({"success": True})
@@ -161,18 +162,6 @@ def websocket_get_state_update_settings(hass, connection, msg):
     connection.send_result(msg["id"], sus)
 
 
-@callback
-def websocket_get_sensors_and_input_numbers(hass: HomeAssistant, connection, msg):
-    """Publish list of sensors from Home Assistant."""
-    entities = []
-    for e in hass.data["entity_registry"].entities:
-        e = str(e)
-        if e.startswith((SENSOR_DOMAIN, INPUT_NUMBER_DOMAIN)):
-            entities.append({"name": e})
-    entities = sorted(entities, key=lambda d: d["name"])
-    connection.send_result(msg["id"], entities)
-
-
 async def async_register_websockets(hass):
     hass.http.register_view(GrillBuddyConfigView)
     hass.http.register_view(GrillBuddyProbeView)
@@ -209,13 +198,5 @@ async def async_register_websockets(hass):
         websocket_get_state_update_settings,
         websocket_api.BASE_COMMAND_MESSAGE_SCHEMA.extend(
             {vol.Required("type"): DOMAIN + "/" + STATE_UPDATE_SETTINGS}
-        ),
-    )
-    async_register_command(
-        hass,
-        DOMAIN + "/" + SENSOR_DOMAIN,
-        websocket_get_sensors_and_input_numbers,
-        websocket_api.BASE_COMMAND_MESSAGE_SCHEMA.extend(
-            {vol.Required("type"): DOMAIN + "/" + SENSOR_DOMAIN}
         ),
     )

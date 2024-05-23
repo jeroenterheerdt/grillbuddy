@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-VERSION = "v2024.5.2"
+VERSION = "v2024.5.3"
 NAME = "Grill Buddy"
 MANUFACTURER = "@jeroenterheerdt"
 

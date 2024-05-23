@@ -34,8 +34,8 @@ export class ErrorDialog extends LitElement {
               dialogAction="cancel"
               .path=${mdiClose}
             ></ha-icon-button>
-            <span slot="title">
-              ${this.hass.localize("state_badge.default.error")}
+            <span class="title">
+             ${this.hass.localize("state_badge.default.error")}
             </span>
           </ha-header-bar>
         </div>
@@ -57,6 +57,10 @@ export class ErrorDialog extends LitElement {
     return css`
       div.wrapper {
         color: var(--primary-text-color);
+      }
+      span.title {
+        font-size: 2em;
+        font-weight: bold;
       }
     `;
   }

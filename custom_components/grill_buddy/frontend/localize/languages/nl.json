@@ -25,6 +25,10 @@
         },
         "value": "Doeltemperatuur"
       },
+      "errors": {
+        "invalid_source": "Bron bestaat niet",
+        "source_does_not_exist": "De bron bestaat niet. Vul een bestaande bron in, zoals bijvoorbeeld 'sensor.mysensor'."
+      },
       "cards": {
         "add-probe": {
           "header": "Voeg thermometer toe",

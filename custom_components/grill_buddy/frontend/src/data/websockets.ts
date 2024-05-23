@@ -23,7 +23,6 @@ export const saveProbe = (
   hass: HomeAssistant,
   config: Partial<Probe>,
 ): Promise<boolean> => {
-  console.log(config);
   return hass.callApi("POST", DOMAIN + "/probes", config);
 };
 
@@ -49,10 +48,6 @@ export const fetchStateUpdateSettings = (
     type: DOMAIN + "/stateupdatesettings",
   });
 
-export const fetchSensors = (hass: HomeAssistant): Promise<string[]> =>
-  hass.callWS({
-    type: DOMAIN + "/sensor",
-  });
 
 /*export const fetchModules = (
   hass: HomeAssistant

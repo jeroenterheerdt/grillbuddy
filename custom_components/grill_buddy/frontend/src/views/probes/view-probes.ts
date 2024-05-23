@@ -12,7 +12,6 @@ import {
   saveProbe,
   fetchPresets,
   fetchStateUpdateSettings,
-  fetchSensors,
 } from "../../data/websockets";
 import { mdiDelete } from "@mdi/js";
 import { SubscribeMixin } from "../../subscribe-mixin";
@@ -33,7 +32,11 @@ import {
   PROBE_TARGET_TEMPERATURE,
   PROBE_UPPER_BOUND,
 } from "../../const";
-import { localizeTemperatureUnit, localizeTemperature } from "../../helpers";
+import {
+  localizeTemperatureUnit,
+  localizeTemperature,
+  handleError,
+} from "../../helpers";
 
 @customElement("grill-buddy-view-probes")
 class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
@@ -84,7 +87,6 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
     this.probes = await fetchProbes(this.hass);
     this.presets = await fetchPresets(this.hass);
     this.state_update_settings = await fetchStateUpdateSettings(this.hass);
-    this.sensors = await fetchSensors(this.hass);
   }
 
   private handleAddProbe(): void {
@@ -97,7 +99,7 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
     };
 
     this.probes = [...this.probes, newProbe];
-
+    //check the source is valid?
     this.saveToHA(newProbe);
   }
 
@@ -130,7 +132,26 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
     if (!this.hass) {
       return;
     }
-    saveProbe(this.hass, probe);
+    //test if source is in hass
+    if (probe.probe_source in this.hass.states) {
+      saveProbe(this.hass, probe);
+    } else {
+      handleError(
+        {
+          body: {
+            message: localize(
+              "panels.probes.errors.source_does_not_exist",
+              this.hass.language,
+            ),
+          },
+          error: localize(
+            "panels.probes.errors.invalid_source",
+            this.hass.language,
+          ),
+        },
+        this.shadowRoot!.querySelector("ha-card") as HTMLElement,
+      );
+    }
   }
 
   private renderTheOptions(thelist: object, selected?: number): TemplateResult {
@@ -273,16 +294,14 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
               <label for="probe_source${index}"
                 >${localize("panels.probes.labels.source", this.hass.language)}:</label
               >
-              <select id="probe_source${index}"
+              <input id="probe_source${index}" type="text"
               .value="${probe.probe_source}"
-              @change="${(e: Event) =>
+              @input="${(e: Event) =>
                 this.handleEditProbe(index, {
                   ...probe,
                   [PROBE_SOURCE]: (e.target as HTMLInputElement).value,
                 })}"
-              >
-              ${this.renderTheSourceOptions(this.sensors, probe.probe_source)}
-              </select>
+              />
             </div>
             <div class="probeline">
             <label for="probe_source_type${index}">${localize("panels.probes.labels.sourcetype", this.hass.language)}:</label>
@@ -398,9 +417,7 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
                   this.hass.language,
                 )}:</label
               >
-              <select id="sourceInput">
-                ${this.renderTheSourceOptions(this.sensors)}
-              </select>
+              <input id="sourceInput" type="text" />
             </div>
 
             <div class="probeline">

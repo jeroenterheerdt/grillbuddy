@@ -75,7 +75,10 @@ export class GrillBuddyViewGeneral extends SubscribeMixin(LitElement) {
     };
     saveConfig(this.hass, this.data)
       .catch((e) =>
-        handleError(e, this.shadowRoot!.querySelector("ha-card") as HTMLElement)
+        handleError(
+          e,
+          this.shadowRoot!.querySelector("ha-card") as HTMLElement,
+        ),
       )
       .then();
   }
