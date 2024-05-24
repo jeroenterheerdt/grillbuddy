@@ -97,7 +97,7 @@ export class GrillBuddyPanel extends LitElement {
               "panels.help.cards.how-to-get-help.first-read-the",
               this.hass.language,
             )}
-            <a href="https://github.com/jeroenterheerdt/grill_buddy/"
+            <a href="https://github.com/jeroenterheerdt/grillbuddy/"
               >${localize(
                 "panels.help.cards.how-to-get-help.readme",
                 this.hass.language,
@@ -118,7 +118,7 @@ export class GrillBuddyPanel extends LitElement {
               "panels.help.cards.how-to-get-help.or-open-a",
               this.hass.language,
             )}
-            <a href="https://github.com/jeroenterheerdt/grill_buddy/issues"
+            <a href="https://github.com/jeroenterheerdt/grillbuddy/issues"
               >${localize(
                 "panels.help.cards.how-to-get-help.github-issue",
                 this.hass.language,
