@@ -99,7 +99,6 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
     };
 
     this.probes = [...this.probes, newProbe];
-    //check the source is valid?
     this.saveToHA(newProbe);
   }
 
@@ -296,7 +295,7 @@ class GrillBuddyViewProbes extends SubscribeMixin(LitElement) {
               >
               <input id="probe_source${index}" type="text"
               .value="${probe.probe_source}"
-              @input="${(e: Event) =>
+              @change="${(e: Event) =>
                 this.handleEditProbe(index, {
                   ...probe,
                   [PROBE_SOURCE]: (e.target as HTMLInputElement).value,

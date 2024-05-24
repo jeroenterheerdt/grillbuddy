@@ -405,7 +405,7 @@ const Ue=2;class ke{constructor(e){}get _$AU(){return this._$AM._$AU}_$AT(e,t,r)
             .narrow=${this.narrow}
           ></ha-menu-button>
           <div class="main-title">${Sr("title",this.hass.language)}</div>
-          <div class="version">${"v2024.5.4"}</div>
+          <div class="version">${"v2024.5.5"}</div>
         </div>
 
         <ha-tabs

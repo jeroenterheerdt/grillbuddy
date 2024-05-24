@@ -1,4 +1,4 @@
-"""The Smart Irrigation Integration."""
+"""The Grill Buddy Integration."""
 
 import logging
 
