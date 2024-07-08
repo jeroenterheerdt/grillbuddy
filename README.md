@@ -71,6 +71,59 @@ action: []
 mode: single
 ```
 
+Here's a more advanced automation that combines detailed goal status and time to target for multiple probes:
+```
+alias: Grill Buddy
+description: ""
+trigger:
+  - platform: state
+    entity_id:
+      - sensor.grill_buddy_probe_1
+      - sensor.grill_buddy_probe_2
+      - sensor.grill_buddy_probe_3
+      - sensor.grill_buddy_probe_4
+      - sensor.grill_buddy_probe_5
+      - sensor.grill_buddy_probe_6
+    attribute: Goal specific status
+    from: below_target_temperature
+    id: not_below_target
+  - platform: numeric_state
+    entity_id:
+      - sensor.grill_buddy_probe_1
+      - sensor.grill_buddy_probe_2
+      - sensor.grill_buddy_probe_3
+      - sensor.grill_buddy_probe_4
+      - sensor.grill_buddy_probe_5
+      - sensor.grill_buddy_probe_6
+    attribute: Time to target (s)
+    below: 60
+    id: time_to_target_below_60
+condition: []
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id:
+              - not_below_target
+        sequence:
+          - service: notify.my_phone
+            data:
+              title: Grill temperature on or above target!
+              message: >-
+                Source: {{trigger.entity_id}}, preset:
+                {{trigger.to_state.attributes.Preset}}
+      - conditions:
+          - condition: trigger
+            id:
+              - time_to_target_below_60
+        sequence:
+          - service: notify.my_phone
+            data:
+              title: Grill temperature almost reached!
+              message: "{{trigger.to_state.attributes.Preset}}"
+mode: single
+
+```
 ## todo and wishlist
 - add to hacs
 - presets:
