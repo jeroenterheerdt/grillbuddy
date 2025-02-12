@@ -36,7 +36,7 @@ In this section:
 - [Usage](#step-3-usage)
   
 ### Step 1: Installation
-Install the custom integration (preferably using HACS: add this repository as a custom repository and install Grill Buddy). After downloading Grill Buddy from HACS, add the integration by searcing 'Grill Buddy' in your configuration and follow the prompts.
+Install the custom integration (preferably using HACS: search for `Grill Buddy`). After downloading Grill Buddy from HACS, add the integration by searcing 'Grill Buddy' in your configuration and follow the prompts.
 
 ### Step 2: Configuration
 After the integration has been installed, you will find a new panel named 'Grill Buddy' in your side bar. Use it to configure your set up which includes setting up probes, their source sensors and the goals.
