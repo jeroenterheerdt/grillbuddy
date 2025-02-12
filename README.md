@@ -1,5 +1,6 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg?style=flat-square)](https://github.com/hacs/integration)
 [![release][release-badge]][release-url]
+
 [![Support the author on Patreon][patreon-shield]][patreon]
 
 [![Buy me a coffee][buymeacoffee-shield]][buymeacoffee]
