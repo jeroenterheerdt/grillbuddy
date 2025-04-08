@@ -375,7 +375,7 @@ class GrillBuddyProbeEntity(SensorEntity, RestoreEntity):
 
     @property
     def device_class(self):
-        return SensorDeviceClass.DURATION
+        return SensorDeviceClass.TEMPERATURE
 
     @property
     def native_unit_of_measurement(self):
