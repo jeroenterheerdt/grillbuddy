@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-VERSION = "v2024.5.5"
+VERSION = "v2025.4.0"
 NAME = "Grill Buddy"
 MANUFACTURER = "@jeroenterheerdt"
 
@@ -12,6 +12,10 @@ CUSTOM_COMPONENTS = "custom_components"
 
 LANGUAGE_FILES_DIR = "frontend/localize/languages"
 SUPPORTED_LANGUAGES = ["en", "nl"]
+
+# Platforms
+SENSOR = "sensor"
+PLATFORMS = [SENSOR]
 
 INTEGRATION_FOLDER = DOMAIN
 PANEL_FOLDER = "frontend"

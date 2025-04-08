@@ -2,7 +2,7 @@ import os
 import logging
 
 from homeassistant.components import frontend, panel_custom
-# from homeassistant.components.http import StaticPathConfig
+from homeassistant.components.http import StaticPathConfig
 
 from .const import (
     CUSTOM_COMPONENTS,
@@ -27,7 +27,16 @@ async def async_register_panel(hass):
     # await hass.http.async_register_static_paths(
     #    StaticPathConfig(PANEL_URL, view_url, cache_headers=False)
     # )
-    hass.http.register_static_path(PANEL_URL, view_url, False)
+    # hass.http.register_static_path(PANEL_URL, view_url, False)
+    await hass.http.async_register_static_paths(
+        [
+            StaticPathConfig(
+                PANEL_URL,
+                view_url,
+                False,
+            )
+        ]
+    )
 
     await panel_custom.async_register_panel(
         hass,

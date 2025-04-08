@@ -2,7 +2,6 @@
 
 import logging
 
-from homeassistant.components.sensor import DOMAIN as PLATFORM
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, asyncio, callback
 from homeassistant.helpers import device_registry as dr, entity_registry as er
@@ -20,6 +19,7 @@ from .const import (
     DOMAIN,
     MANUFACTURER,
     NAME,
+    PLATFORMS,
     PROBE_SOURCE,
     PROBES,
     VERSION,
@@ -63,9 +63,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     if entry.unique_id is None:
         hass.config_entries.async_update_entry(entry, unique_id=coordinator.id, data={})
 
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(entry, PLATFORM)
-    )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    # hass.async_create_task(
+    #    hass.config_entries.async_forward_entry_setup(entry, PLATFORM)
+    # )
 
     # update listener for options flow
     entry.async_on_unload(entry.add_update_listener(options_update_listener))
@@ -92,18 +93,35 @@ async def options_update_listener(hass, config_entry):
 
 async def async_unload_entry(hass, entry):
     """Unload Grill Buddy config entry."""
-    unload_ok = all(
-        await asyncio.gather(
-            *[hass.config_entries.async_forward_entry_unload(entry, PLATFORM)]
+    if DOMAIN in hass.data and entry.entry_id in hass.data[DOMAIN]:
+        coordinator = hass.data[DOMAIN][entry.entry_id][COORDINATOR]
+        unloaded = all(
+            await asyncio.gather(
+                *[
+                    hass.config_entries.async_forward_entry_unload(entry, platform)
+                    for platform in PLATFORMS
+                    if platform in coordinator.platforms
+                ]
+            )
         )
-    )
-    if not unload_ok:
-        return False
+        if unloaded:
+            hass.data[DOMAIN].pop(entry.entry_id)
 
-    async_unregister_panel(hass)
-    coordinator = hass.data[DOMAIN][COORDINATOR]
-    await coordinator.async_unload()
+        return unloaded
     return True
+
+    # unload_ok = all(
+    #    await asyncio.gather(
+    #        *[hass.config_entries.async_forward_entry_unload(entry, PLATFORM)]
+    #    )
+    # )
+    # if not unload_ok:
+    #    return False
+
+    # async_unregister_panel(hass)
+    # coordinator = hass.data[DOMAIN][COORDINATOR]
+    # await coordinator.async_unload()
+    # return True
 
 
 async def async_remove_entry(hass, entry):
