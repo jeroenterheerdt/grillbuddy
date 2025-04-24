@@ -1,0 +1,31 @@
+{
+  "config": {
+    "abort": {
+      "single_instance_allowed": "Es ist nur eine einzige Instanz von Grill Buddy erlaubt."
+    },
+    "error": {
+      "name": "Gib einen eindeutigen Namen für die Integration an."
+    },
+    "step": {
+      "user": {
+        "title": "Allgemeine Einrichtung",
+        "description": "Wenn du Hilfe bei der Konfiguration brauchst, siehe https://github.com/jeroenterheerdt/GrillBuddy",
+        "data": {
+          "name": "Eindeutiger Name der Integration"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Allgemeine Einrichtung",
+        "description": "Wenn du Hilfe bei der Konfiguration brauchst, siehe https://github.com/jeroenterheerdt/GrillBuddy",
+        "data": {
+          "name": "Eindeutiger Name der Integration"
+        }
+      }
+    }
+  },
+  "services": {}
+}
