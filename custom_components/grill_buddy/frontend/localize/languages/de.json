@@ -1,0 +1,92 @@
+{
+  "common": {
+    "actions": {
+      "delete": "Löschen"
+    },
+    "labels": {
+      "select": "Auswählen"
+    }
+  },
+  "panels": {
+    "probes": {
+      "title": "Fühler",
+      "description": "Richte deine Fühler hier ein",
+      "labels": {
+        "name": "Name",
+        "source": "Quelle",
+        "preset": "Voreinstellung",
+        "state_update_setting": "Ziel",
+        "upper_bound": "Obere Schwelle",
+        "lower_bound": "Untere Schwelle",
+        "sourcetype": "Zieltemperatur beziehen von",
+        "sourcetypes": {
+          "preset": "Voreinstellung",
+          "value": "Benutzerdefinierter Wert"
+        },
+        "value": "Zieltemperatur"
+      },
+      "errors": {
+        "invalid_source": "Ungültige Quelle",
+        "source_does_not_exist": "Quelle existiert nicht. Bitte gib eine gültige Quelle ein, z. B. 'sensor.mysensor'."
+      },
+      "cards": {
+        "add-probe": {
+          "header": "Fühler hinzufügen",
+          "actions": {
+            "add": "Hinzufügen"
+          }
+        }
+      }
+    },
+    "help": {
+      "title": "Hilfe",
+      "cards": {
+        "how-to-get-help": {
+          "title": "Wie man Hilfe bekommt",
+          "first-read-the": "Lies zuerst die",
+          "readme": "Readme",
+          "if-you-still-need-help": "Wenn du weiterhin Hilfe brauchst, kontaktiere das",
+          "community-forum": "Community-Forum",
+          "or-open-a": "oder öffne ein",
+          "github-issue": "Github-Issue",
+          "english-only": "Nur auf Englisch bitte"
+        }
+      }
+    }
+  },
+  "title": "Grill Buddy",
+  "defaults": {
+    "presets": {
+      "beef_rare": "Rind (blutig)",
+      "beef_medium_rare": "Rind (medium rare)",
+      "beef_medium": "Rind (medium)",
+      "beef_medium_well": "Rind (medium well)",
+      "beef_well_done": "Rind (well done)",
+      "fish": "Fisch",
+      "ground_beef": "Hackfleisch (Rind)",
+      "ground_poultry": "Hackfleisch (Geflügel)",
+      "lamb_rare": "Lamm (blutig)",
+      "lamb_medium_rare": "Lamm (medium rare)",
+      "lamb_medium": "Lamm (medium)",
+      "lamb_medium_well": "Lamm (medium well)",
+      "lamb_well_done": "Lamm (well done)",
+      "pork_medium": "Schwein (medium)",
+      "pork_medium_well": "Schwein (medium well)",
+      "pork_well_done": "Schwein (well done)",
+      "poultry": "Geflügel",
+      "turkey": "Truthahn",
+      "veal_rare": "Kalb (blutig)",
+      "veal_medium_rare": "Kalb (medium rare)",
+      "veal_medium": "Kalb (medium)",
+      "veal_medium_well": "Kalb (medium well)",
+      "veal_well_done": "Kalb (well done)"
+    }
+  },
+  "state_update_settings": {
+    "at_target_temperature": "Bei Zieltemperatur",
+    "within_bounds": "Temperatur im Bereich",
+    "outside_bounds": "Temperatur außerhalb des Bereichs",
+    "above_upper_bound": "Temperatur über der oberen Schwelle",
+    "below_lower_bound": "Temperatur unter der unteren Schwelle"
+  }
+}
