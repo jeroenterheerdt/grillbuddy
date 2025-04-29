@@ -1,4 +1,4 @@
-export const VERSION = "v2024.4.2";
+export const VERSION = "v2025.4.1";
 export const REPO = "https://github.com/jeroenterheerdt/grill_buddy";
 export const ISSUES_URL = REPO + "/issues";
 
