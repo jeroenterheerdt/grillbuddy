@@ -11,7 +11,7 @@ DOMAIN = "grill_buddy"
 CUSTOM_COMPONENTS = "custom_components"
 
 LANGUAGE_FILES_DIR = "frontend/localize/languages"
-SUPPORTED_LANGUAGES = ["en", "nl"]
+SUPPORTED_LANGUAGES = ["en", "nl", "de"]
 
 # Platforms
 SENSOR = "sensor"
